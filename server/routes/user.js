@@ -5,5 +5,6 @@ router.route('/user/signup').post(signUp);
 router.route('/user/signin').post(signIn);
 // router.route('/user/profile').get(profile);
 router.route('/user/friend').post(friend);
+router.route('/user/:state').get();
 
 module.exports = router;

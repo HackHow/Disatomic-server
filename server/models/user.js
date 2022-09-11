@@ -53,4 +53,6 @@ const friend = async (userId, friendName) => {
   }
 };
 
+// const friend
+
 module.exports = { signUp, signIn, friend };
