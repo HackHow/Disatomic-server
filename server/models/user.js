@@ -1,5 +1,4 @@
 const { mongoDB } = require('../../utils/mongodb');
-
 const { User } = require('../models/schema');
 
 const signUp = async (name, email, password) => {
@@ -12,8 +11,8 @@ const signUp = async (name, email, password) => {
     console.log(user);
     return 'Register Success';
   } catch (error) {
-    console.log(error.message);
-    return 'Register Fail';
+    console.log('error', error.message);
+    return { error: 'Email Already Exists', status: 403 };
   }
 };
 
