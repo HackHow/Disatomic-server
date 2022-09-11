@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
   const result = await User.signUp(name, email, hashPassword);
 
   if (result.error) {
-    res.status(403).send({ error: result.error });
+    res.status(403).send(result.error);
     return;
   }
 
@@ -25,7 +25,9 @@ const signIn = async (req, res) => {
   if (result !== null) {
     if (await argon2.verify(result.password, password)) {
       const jwtToken = await jwtSign({ email, password }, SECRET, EXPIRED);
-      res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
+      res
+        .status(200)
+        .send({ userId: result._id, accessToken: jwtToken, expired: EXPIRED });
       return;
     } else {
       res.status(401).send('Wrong Password');
@@ -39,4 +41,16 @@ const signIn = async (req, res) => {
 
 const profile = async (req, res) => {};
 
-module.exports = { signUp, signIn, profile };
+const friend = async (req, res) => {
+  const { userId, friendName } = req.body;
+  const result = await User.friend(userId, friendName);
+
+  if (result.error) {
+    res.status(403).send(result.error);
+    return;
+  }
+  res.status(200).send(result);
+  return;
+};
+
+module.exports = { signUp, signIn, profile, friend };
