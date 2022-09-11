@@ -15,7 +15,6 @@ const signUp = async (req, res) => {
   }
 
   const jwtToken = await jwtSign({ name, email, password }, SECRET, EXPIRED);
-
   res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
 };
 
@@ -25,7 +24,8 @@ const signIn = async (req, res) => {
 
   if (result !== null) {
     if (await argon2.verify(result.password, password)) {
-      res.status(200).send('Login Success');
+      const jwtToken = await jwtSign({ email, password }, SECRET, EXPIRED);
+      res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
       return;
     } else {
       res.status(401).send('Wrong Password');
