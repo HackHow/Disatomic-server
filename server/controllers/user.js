@@ -14,4 +14,6 @@ const signIn = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { signUp, signIn };
+const profile = async (req, res) => {};
+
+module.exports = { signUp, signIn, profile };

@@ -22,7 +22,7 @@ const chatSchema = new Schema([
     createdAt: {
       type: Date,
       immutable: true,
-      default: new Date().toISOString(),
+      default: () => Date.now(),
     },
   },
 ]);
@@ -39,7 +39,7 @@ const linkSchema = new Schema([
     createdAt: {
       type: Date,
       immutable: true,
-      default: new Date().toISOString(),
+      default: () => Date.now(),
     },
   },
 ]);
@@ -56,7 +56,7 @@ const fileSchema = new Schema([
     createdAt: {
       type: Date,
       immutable: true,
-      default: new Date().toISOString(),
+      default: () => Date.now(),
     },
   },
 ]);
@@ -103,7 +103,7 @@ const userSchema = new Schema({
   createdAt: {
     type: Date,
     immutable: true,
-    default: new Date().toISOString(),
+    default: () => Date.now(),
   },
   updatedAt: {
     type: Date,
@@ -145,7 +145,7 @@ const serverSchema = new Schema({
           createdAt: {
             type: Date,
             immutable: true,
-            default: new Date().toISOString(),
+            default: () => Date.now(),
           },
           updatedAt: {
             type: Date,
@@ -158,7 +158,7 @@ const serverSchema = new Schema({
   createdAt: {
     type: Date,
     immutable: true,
-    default: new Date().toISOString(),
+    default: () => Date.now(),
   },
   updatedAt: {
     type: Date,
