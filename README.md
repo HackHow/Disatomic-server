@@ -1,5 +1,10 @@
 ## **This is Disatomic project with Express**
 
+**_2022/09/11_**
+
+- **Add JWT token sign and verify with jsonwebtoken**
+- **Add hash password and verify password with argon2 package**
+
 **_2022/09/08_**
 
 - **Create MVC architecture**
