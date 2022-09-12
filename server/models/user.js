@@ -1,4 +1,4 @@
-const { mongoDB } = require('../../utils/mongodb');
+const conn = require('../../utils/mongodb');
 const { User } = require('../models/schema');
 
 const signUp = async (name, email, password) => {
