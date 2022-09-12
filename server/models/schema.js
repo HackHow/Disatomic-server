@@ -96,8 +96,13 @@ const userSchema = new Schema({
   ],
   servers: [
     {
+      _id: false,
       server: String, // 'AppWork School',
       userRoles: [String], // ['BackEnd', 'Teacher'],
+      serverId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
     },
   ],
   createdAt: {
@@ -113,11 +118,23 @@ const userSchema = new Schema({
 
 const serverSchema = new Schema({
   serverName: String, // AppworkSchool
-  members: [String], // ['Howard', '小賴', '谷哥', 'Claudia']
+  members: [
+    // ['Howard', '小賴', '谷哥', 'Claudia'] [object._id]
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   roles: [
     {
-      title: [String], // ['BackEnd', 'Teacher']
-      users: [String], // ['Howard', 'Adam', 'Kelvin'],
+      title: String, // 'BackEnd'
+      users: [
+        {
+          // ['Howard', 'Adam', 'Kelvin'],
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      ],
     },
   ],
   groups: [
