@@ -2,7 +2,7 @@ const conn = require('../../utils/mongodb');
 const { User, Server } = require('../models/schema');
 
 const createServer = async (userId, serverName) => {
-  console.log({ userId, serverName });
+  console.log({ 'userId': userId, 'serverName': serverName });
   const session = await conn.startSession();
   try {
     session.startTransaction();
