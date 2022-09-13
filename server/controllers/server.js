@@ -20,11 +20,11 @@ const deleteServer = async (req, res) => {
   res.status(200).send('Delete server success');
 };
 
-const ownServer = async (req, res) => {
+const userOwnServer = async (req, res) => {
   const { userId } = req.body;
   const result = await Server.ownServer(userId);
   console.log(result.map((item) => item.server));
   res.send('OK');
 };
 
-module.exports = { createServer, deleteServer, ownServer };
+module.exports = { createServer, deleteServer, userOwnServer };

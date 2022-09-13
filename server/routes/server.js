@@ -2,12 +2,12 @@ const router = require('express').Router();
 const {
   createServer,
   deleteServer,
-  ownServer,
+  userOwnServer,
 } = require('../controllers/server');
 
 router.route('/server').post(createServer);
 router.route('/server').delete(deleteServer);
-router.route('/server').get(ownServer);
+router.route('/server').get(userOwnServer);
 
 // router.route('/server/:serverId').get();
 
