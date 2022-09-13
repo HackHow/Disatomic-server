@@ -6,6 +6,7 @@
 - **Add user profile api**
 - **Demo sprint2**
 - **Add accept friend invitation api**
+- **Add reject friend invitation api**
 
 **_2022/09/12_**
 
