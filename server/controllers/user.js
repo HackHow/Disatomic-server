@@ -51,8 +51,8 @@ const profile = async (req, res) => {
 };
 
 const sendFriendInvitation = async (req, res) => {
-  const { userId, friendName } = req.body;
-  const result = await User.sendFriendInvitation(userId, friendName);
+  const { senderId, friendName } = req.body;
+  const result = await User.sendFriendInvitation(senderId, friendName);
 
   if (result.error) {
     res.status(403).send(result.error);
@@ -63,19 +63,25 @@ const sendFriendInvitation = async (req, res) => {
 };
 
 const acceptFriend = async (req, res) => {
-  const { userId, senderId } = req.body;
-  const result = await User.acceptFriend(userId, senderId);
+  const { receiverId, senderId } = req.body;
+  const result = await User.acceptFriend(receiverId, senderId);
 
   res.send(result);
 };
 
 const rejectFriend = async (req, res) => {
-  const { userId, senderId } = req.body;
-  const result = await User.rejectFriend(userId, senderId);
+  const { receiverId, senderId } = req.body;
+  const result = await User.rejectFriend(receiverId, senderId);
 
   res.send(result);
 };
 
+const cancelFriend = async (req, res) => {
+  const { senderId, receiverId } = req.body;
+  const result = await User.cancelFriend(senderId, receiverId);
+
+  res.send(result);
+};
 module.exports = {
   signUp,
   signIn,
@@ -83,4 +89,5 @@ module.exports = {
   sendFriendInvitation,
   acceptFriend,
   rejectFriend,
+  cancelFriend,
 };

@@ -35,21 +35,23 @@ const profile = async (userId) => {
   }
 };
 
-const sendFriendInvitation = async (userId, friendName) => {
+const sendFriendInvitation = async (senderId, friendName) => {
+  console.log('senderId:', senderId);
+  console.log('friendName:', friendName);
   const session = await conn.startSession();
   try {
     session.startTransaction();
     const friend = await User.findOneAndUpdate(
       { name: friendName },
       {
-        $addToSet: { pendingFriends: userId },
+        $addToSet: { pendingFriends: senderId },
         $set: { updatedAt: Date.now() },
       },
       { new: true }
     ).exec();
 
     const user = await User.findOneAndUpdate(
-      { _id: userId },
+      { _id: senderId },
       {
         $addToSet: { inviteFriends: friend._id },
         $set: { updatedAt: Date.now() },
@@ -58,8 +60,8 @@ const sendFriendInvitation = async (userId, friendName) => {
     ).exec();
 
     await session.commitTransaction();
-    console.log(friend);
-    console.log(user);
+    console.log('friend', friend);
+    console.log('user', user);
 
     // return 'Outgoing Success';
     return { friendName: friend.name, msg: 'Outgoing Success' };
@@ -72,12 +74,12 @@ const sendFriendInvitation = async (userId, friendName) => {
   }
 };
 
-const acceptFriend = async (userId, senderId) => {
+const acceptFriend = async (receiverId, senderId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const updateUserFriend = await User.findByIdAndUpdate(
-      userId,
+    const updateReceiverFriend = await User.findByIdAndUpdate(
+      receiverId,
       {
         $pull: { pendingFriends: senderId },
         $push: { friends: senderId },
@@ -87,12 +89,15 @@ const acceptFriend = async (userId, senderId) => {
 
     const updateSenderFriend = await User.findByIdAndUpdate(
       senderId,
-      { $pull: { inviteFriends: userId }, $addToSet: { friends: userId } },
+      {
+        $pull: { inviteFriends: receiverId },
+        $addToSet: { friends: receiverId },
+      },
       { new: true }
     ).exec();
 
     await session.commitTransaction();
-    console.log(updateUserFriend);
+    console.log(updateReceiverFriend);
     console.log('---------------------');
     console.log(updateSenderFriend);
     return 'Accept friend success';
@@ -105,12 +110,12 @@ const acceptFriend = async (userId, senderId) => {
   }
 };
 
-const rejectFriend = async (userId, senderId) => {
+const rejectFriend = async (receiverId, senderId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const updateUserFriend = await User.findByIdAndUpdate(
-      userId,
+    const updateReceiverFriend = await User.findByIdAndUpdate(
+      receiverId,
       {
         $pull: { pendingFriends: senderId },
       },
@@ -120,19 +125,53 @@ const rejectFriend = async (userId, senderId) => {
     const updateSenderFriend = await User.findByIdAndUpdate(
       senderId,
       {
-        $pull: { inviteFriends: userId },
+        $pull: { inviteFriends: receiverId },
       },
       { new: true }
     ).exec();
 
     await session.commitTransaction();
-    console.log(updateUserFriend);
+    console.log(updateReceiverFriend);
     console.log(updateSenderFriend);
     return 'Reject friend success';
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
     return 'Reject friend fail';
+  } finally {
+    session.endSession();
+  }
+};
+
+const cancelFriend = async (senderId, receiverId) => {
+  console.log({ senderId, receiverId });
+  const session = await conn.startSession();
+  try {
+    session.startTransaction();
+    const updateSenderFriend = await User.findByIdAndUpdate(
+      senderId,
+      {
+        $pull: { inviteFriends: receiverId },
+      },
+      { new: true }
+    ).exec();
+
+    const updateReceiverFriend = await User.findByIdAndUpdate(
+      receiverId,
+      {
+        $pull: { pendingFriends: senderId },
+      },
+      { new: true }
+    ).exec();
+
+    await session.commitTransaction();
+    console.log(updateReceiverFriend);
+    console.log(updateSenderFriend);
+    return 'Cancel friend success';
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
+    return 'Cancel friend fail';
   } finally {
     session.endSession();
   }
@@ -145,4 +184,5 @@ module.exports = {
   sendFriendInvitation,
   acceptFriend,
   rejectFriend,
+  cancelFriend,
 };
