@@ -78,4 +78,16 @@ const deleteServer = async (userId, serverId) => {
   }
 };
 
-module.exports = { createServer, deleteServer };
+const ownServer = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    // console.log(user);
+    // console.log(user.servers);
+    return user.servers;
+  } catch (error) {
+    console.log(error);
+    return 'Get Server fail';
+  }
+};
+
+module.exports = { createServer, deleteServer, ownServer };

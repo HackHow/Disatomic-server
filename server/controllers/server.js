@@ -1,3 +1,4 @@
+const { User } = require('../models/schema');
 const Server = require('../models/server');
 
 const createServer = async (req, res) => {
@@ -19,4 +20,11 @@ const deleteServer = async (req, res) => {
   res.status(200).send('Delete server success');
 };
 
-module.exports = { createServer, deleteServer };
+const ownServer = async (req, res) => {
+  const { userId } = req.body;
+  const result = await Server.ownServer(userId);
+  console.log(result.map((item) => item.server));
+  res.send('OK');
+};
+
+module.exports = { createServer, deleteServer, ownServer };
