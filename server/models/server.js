@@ -42,12 +42,28 @@ const createServer = async (userId, serverName) => {
   }
 };
 
-const deleteServer = (userId, serverName) => {
+const deleteServer = async (userId, serverId) => {
+  console.log({ userId, serverId });
   try {
-    // const server = await User.findOneAndDelete
+    const server = await Server.findByIdAndDelete(serverId, { new: true });
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          servers: {
+            serverId: serverId,
+          },
+        },
+      },
+      { new: true }
+    ).exec();
+
+    console.log('server', server);
+    console.log('user', user);
+    return 'Delete success';
   } catch (error) {
     console.log(error.message);
   }
 };
 
-module.exports = { createServer };
+module.exports = { createServer, deleteServer };
