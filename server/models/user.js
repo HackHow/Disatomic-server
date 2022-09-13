@@ -72,18 +72,21 @@ const sendFriendInvitation = async (userId, friendName) => {
   }
 };
 
-const acceptFriend = async (userId, friendId) => {
+const acceptFriend = async (userId, senderId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
     const updateUserFriend = await User.findByIdAndUpdate(
       userId,
-      { $pull: { pendingFriends: friendId }, $push: { friends: friendId } },
+      {
+        $pull: { pendingFriends: senderId },
+        $push: { friends: senderId },
+      },
       { new: true }
     ).exec();
 
-    const updateOtherFriend = await User.findByIdAndUpdate(
-      friendId,
+    const updateSenderFriend = await User.findByIdAndUpdate(
+      senderId,
       { $pull: { inviteFriends: userId }, $addToSet: { friends: userId } },
       { new: true }
     ).exec();
@@ -91,12 +94,45 @@ const acceptFriend = async (userId, friendId) => {
     await session.commitTransaction();
     console.log(updateUserFriend);
     console.log('---------------------');
-    console.log(updateOtherFriend);
+    console.log(updateSenderFriend);
     return 'Accept friend success';
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
     return 'Accept friend fail';
+  } finally {
+    session.endSession();
+  }
+};
+
+const rejectFriend = async (userId, senderId) => {
+  const session = await conn.startSession();
+  try {
+    session.startTransaction();
+    const updateUserFriend = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { pendingFriends: senderId },
+      },
+      { new: true }
+    ).exec();
+
+    const updateSenderFriend = await User.findByIdAndUpdate(
+      senderId,
+      {
+        $pull: { inviteFriends: userId },
+      },
+      { new: true }
+    ).exec();
+
+    await session.commitTransaction();
+    console.log(updateUserFriend);
+    console.log(updateSenderFriend);
+    return 'Reject friend success';
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
+    return 'Reject friend fail';
   } finally {
     session.endSession();
   }
@@ -108,4 +144,5 @@ module.exports = {
   profile,
   sendFriendInvitation,
   acceptFriend,
+  rejectFriend,
 };

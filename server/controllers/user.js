@@ -63,8 +63,15 @@ const sendFriendInvitation = async (req, res) => {
 };
 
 const acceptFriend = async (req, res) => {
-  const { userId, friendId } = req.body;
-  const result = await User.acceptFriend(userId, friendId);
+  const { userId, senderId } = req.body;
+  const result = await User.acceptFriend(userId, senderId);
+
+  res.send(result);
+};
+
+const rejectFriend = async (req, res) => {
+  const { userId, senderId } = req.body;
+  const result = await User.rejectFriend(userId, senderId);
 
   res.send(result);
 };
@@ -75,4 +82,5 @@ module.exports = {
   profile,
   sendFriendInvitation,
   acceptFriend,
+  rejectFriend,
 };
