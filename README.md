@@ -2,12 +2,13 @@
 
 **_2022/09/13_**
 
-- **Add delete server api**
-- **Add user profile api**
-- **Demo sprint2**
-- **Add accept friend invitation api**
-- **Add reject friend invitation api**
+- **Add user own server api**
 - **Add cancel friend invitation api**
+- **Add reject friend invitation api**
+- **Add accept friend invitation api**
+- **Demo sprint2**
+- **Add user profile api**
+- **Add delete server api**
 
 **_2022/09/12_**
 
