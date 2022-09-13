@@ -5,6 +5,7 @@
 - **Add delete server api**
 - **Add user profile api**
 - **Demo sprint2**
+- **Add accept friend invitation api**
 
 **_2022/09/12_**
 
