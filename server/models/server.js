@@ -43,9 +43,14 @@ const createServer = async (userId, serverName) => {
 };
 
 const deleteServer = async (userId, serverId) => {
-  console.log({ userId, serverId });
+  const session = await conn.startSession();
   try {
-    const server = await Server.findByIdAndDelete(serverId, { new: true });
+    session.startTransaction();
+
+    const server = await Server.findByIdAndDelete(serverId, {
+      new: true,
+      session: session,
+    });
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -55,14 +60,21 @@ const deleteServer = async (userId, serverId) => {
           },
         },
       },
-      { new: true }
+      { new: true, session: session }
     ).exec();
 
-    console.log('server', server);
-    console.log('user', user);
-    return 'Delete success';
+    await session.commitTransaction();
+    console.log(server);
+    console.log('--------');
+    console.log(user);
+    console.log('deleteServer transaction success');
+
+    return { server, user };
   } catch (error) {
+    await session.abortTransaction();
     console.log(error.message);
+  } finally {
+    session.endSession();
   }
 };
 
