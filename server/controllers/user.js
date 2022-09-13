@@ -39,7 +39,16 @@ const signIn = async (req, res) => {
   }
 };
 
-const profile = async (req, res) => {};
+const profile = async (req, res) => {
+  const { userId } = req.body;
+  const result = await User.profile(userId);
+  console.log('result', result);
+
+  if (result !== null) {
+    // console.log(result.name, result.email);
+    res.status(200).send({ name: result.name, email: result.email });
+  }
+};
 
 const friend = async (req, res) => {
   const { userId, friendName } = req.body;

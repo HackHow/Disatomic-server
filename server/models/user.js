@@ -26,6 +26,15 @@ const signIn = async (email) => {
   }
 };
 
+const profile = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    return user;
+  } catch (error) {
+    console.log('error:', error.message);
+  }
+};
+
 const friend = async (userId, friendName) => {
   try {
     const friendId = await User.findOneAndUpdate(
@@ -46,13 +55,15 @@ const friend = async (userId, friendName) => {
       { new: true }
     ).exec();
 
-    return 'Outgoing Success';
+    console.log(friendId);
+    console.log(user);
+
+    // return 'Outgoing Success';
+    return { friendName: friendId.name, msg: 'Outgoing Success' };
   } catch (error) {
     console.log('error message:', error.message);
     return { error: 'Can not find this user' };
   }
 };
 
-// const friend
-
-module.exports = { signUp, signIn, friend };
+module.exports = { signUp, signIn, profile, friend };
