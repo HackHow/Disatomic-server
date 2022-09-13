@@ -1,5 +1,16 @@
 ## **This is Disatomic project with Express**
 
+**_2022/09/13_**
+
+- **Add delete server api**
+- **Add user profile api**
+- **Demo sprint2**
+
+**_2022/09/12_**
+
+- **Move mongoDB to cloud because it's necessary to use transaction**
+- **Add Create server api**
+
 **_2022/09/11_**
 
 - **Add JWT token sign and verify with jsonwebtoken**
