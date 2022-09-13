@@ -12,12 +12,11 @@ const createServer = async (req, res) => {
 
 const deleteServer = async (req, res) => {
   console.log('controller deleteServer PASS');
+  //const {serverId} = req.params
   const { userId, serverId } = req.body;
   const result = await Server.deleteServer(userId, serverId);
 
-  console.log('deleteServer result:', result);
-
-  res.send(result);
+  res.status(200).send('Delete server success');
 };
 
 module.exports = { createServer, deleteServer };
