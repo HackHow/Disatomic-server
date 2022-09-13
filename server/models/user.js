@@ -35,9 +35,11 @@ const profile = async (userId) => {
   }
 };
 
-const friend = async (userId, friendName) => {
+const sendFriendInvitation = async (userId, friendName) => {
+  const session = await conn.startSession();
   try {
-    const friendId = await User.findOneAndUpdate(
+    session.startTransaction();
+    const friend = await User.findOneAndUpdate(
       { name: friendName },
       {
         $addToSet: { pendingFriends: userId },
@@ -49,21 +51,61 @@ const friend = async (userId, friendName) => {
     const user = await User.findOneAndUpdate(
       { _id: userId },
       {
-        $addToSet: { inviteFriends: friendId._id },
+        $addToSet: { inviteFriends: friend._id },
         $set: { updatedAt: Date.now() },
       },
       { new: true }
     ).exec();
 
-    console.log(friendId);
+    await session.commitTransaction();
+    console.log(friend);
     console.log(user);
 
     // return 'Outgoing Success';
-    return { friendName: friendId.name, msg: 'Outgoing Success' };
+    return { friendName: friend.name, msg: 'Outgoing Success' };
   } catch (error) {
+    await session.abortTransaction();
     console.log('error message:', error.message);
     return { error: 'Can not find this user' };
+  } finally {
+    session.endSession();
   }
 };
 
-module.exports = { signUp, signIn, profile, friend };
+const acceptFriend = async (userId, friendId) => {
+  const session = await conn.startSession();
+  try {
+    session.startTransaction();
+    const updateUserFriend = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { pendingFriends: friendId }, $push: { friends: friendId } },
+      { new: true }
+    ).exec();
+
+    const updateOtherFriend = await User.findByIdAndUpdate(
+      friendId,
+      { $pull: { inviteFriends: userId }, $addToSet: { friends: userId } },
+      { new: true }
+    ).exec();
+
+    await session.commitTransaction();
+    console.log(updateUserFriend);
+    console.log('---------------------');
+    console.log(updateOtherFriend);
+    return 'Accept friend success';
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
+    return 'Accept friend fail';
+  } finally {
+    session.endSession();
+  }
+};
+
+module.exports = {
+  signUp,
+  signIn,
+  profile,
+  sendFriendInvitation,
+  acceptFriend,
+};

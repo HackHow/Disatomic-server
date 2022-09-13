@@ -50,9 +50,9 @@ const profile = async (req, res) => {
   }
 };
 
-const friend = async (req, res) => {
+const sendFriendInvitation = async (req, res) => {
   const { userId, friendName } = req.body;
-  const result = await User.friend(userId, friendName);
+  const result = await User.sendFriendInvitation(userId, friendName);
 
   if (result.error) {
     res.status(403).send(result.error);
@@ -62,4 +62,17 @@ const friend = async (req, res) => {
   return;
 };
 
-module.exports = { signUp, signIn, profile, friend };
+const acceptFriend = async (req, res) => {
+  const { userId, friendId } = req.body;
+  const result = await User.acceptFriend(userId, friendId);
+
+  res.send(result);
+};
+
+module.exports = {
+  signUp,
+  signIn,
+  profile,
+  sendFriendInvitation,
+  acceptFriend,
+};
