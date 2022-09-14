@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const dayjs = require('dayjs');
-const utc = require('dayjs/plugin/utc');
-dayjs.extend(utc);
 
 const { Schema, model } = mongoose;
 
@@ -11,12 +8,12 @@ const chatSchema = new Schema([
     content: String,
     links: [
       {
-        url: String, // default null
+        url: String, // Can be null
       },
     ],
-    images: [
+    files: [
       {
-        url: String, // default null
+        url: String, // Can be null
       },
     ],
     createdAt: {
@@ -27,39 +24,39 @@ const chatSchema = new Schema([
   },
 ]);
 
-const linkSchema = new Schema([
-  {
-    sender: { type: String, required: true },
-    content: String,
-    links: [
-      {
-        url: { type: String, required: true },
-      },
-    ],
-    createdAt: {
-      type: Date,
-      immutable: true,
-      default: () => Date.now(),
-    },
-  },
-]);
+// const linkSchema = new Schema([
+//   {
+//     sender: { type: String, required: true },
+//     content: String,
+//     links: [
+//       {
+//         url: { type: String, required: true },
+//       },
+//     ],
+//     createdAt: {
+//       type: Date,
+//       immutable: true,
+//       default: () => Date.now(),
+//     },
+//   },
+// ]);
 
-const fileSchema = new Schema([
-  {
-    sender: { type: String, required: true },
-    content: String, // default null
-    images: [
-      {
-        url: { type: String, required: true },
-      },
-    ],
-    createdAt: {
-      type: Date,
-      immutable: true,
-      default: () => Date.now(),
-    },
-  },
-]);
+// const fileSchema = new Schema([
+//   {
+//     sender: { type: String, required: true },
+//     content: String, // default null
+//     images: [
+//       {
+//         url: { type: String, required: true },
+//       },
+//     ],
+//     createdAt: {
+//       type: Date,
+//       immutable: true,
+//       default: () => Date.now(),
+//     },
+//   },
+// ]);
 
 const userSchema = new Schema({
   name: {
@@ -97,11 +94,15 @@ const userSchema = new Schema({
   servers: [
     {
       _id: false,
-      server: String, // 'AppWork School',
-      userRoles: [String], // ['BackEnd', 'Teacher'],
+      // server: String, // 'AppWork School',
+      // userRoles: [String], // ['BackEnd', 'Teacher'],
+      userRoles: {
+        type: Schema.Types.ObjectId,
+        ref: 'Server',
+      },
       serverId: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Server',
       },
     },
   ],
@@ -137,7 +138,7 @@ const serverSchema = new Schema({
       ],
     },
   ],
-  groups: [
+  category: [
     {
       title: String, // BACK-END
       channel: [
@@ -152,13 +153,23 @@ const serverSchema = new Schema({
           ],
           members: [
             {
-              id: String, // Howard
-              permission: String, // read
+              id: {
+                // Howard
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+              },
+              permission: String, // read (程式控制)
             },
           ],
           chatRecord: chatSchema,
-          linksBlock: linkSchema,
-          filesBlock: fileSchema,
+          linksBlock: {
+            type: Schema.Types.ObjectId,
+            ref: 'Server',
+          },
+          filesBlock: {
+            type: Schema.Types.ObjectId,
+            ref: 'Server',
+          },
           createdAt: {
             type: Date,
             immutable: true,
