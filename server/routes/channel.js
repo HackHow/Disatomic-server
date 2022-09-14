@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { CreateChannel } = require('../controllers/channel');
+const { createChannel, deleteChannel } = require('../controllers/channel');
 // router.route('/channel').get();
-router.route('/channel').post(CreateChannel);
-// router.route('/channel').delete();
+router.route('/channel').post(createChannel);
+router.route('/channel').delete(deleteChannel);
 
 module.exports = router;
