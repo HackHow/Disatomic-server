@@ -17,4 +17,12 @@ const deleteChannel = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { createChannel, deleteChannel };
+const getChannel = async (req, res) => {
+  const { channelId } = req.body;
+  const result = await Channel.getChannel(channelId);
+
+  console.log(result);
+  res.send(result);
+};
+
+module.exports = { createChannel, deleteChannel, getChannel };

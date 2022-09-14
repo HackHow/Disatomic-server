@@ -42,4 +42,17 @@ const deleteChannel = async (serverId, channelId) => {
   }
 };
 
-module.exports = { createChannel, deleteChannel };
+const getChannel = async (channelId) => {
+  try {
+    const channel = await Server.findOne({
+      'category.channel._id': channelId,
+    });
+
+    console.log(channel.category[0].channel);
+    return 'ok';
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { createChannel, deleteChannel, getChannel };
