@@ -75,6 +75,7 @@ const sendFriendInvitation = async (senderId, friendName) => {
 };
 
 const acceptFriend = async (receiverId, senderId) => {
+  console.log({ receiverId, senderId });
   const session = await conn.startSession();
   try {
     session.startTransaction();
@@ -97,9 +98,9 @@ const acceptFriend = async (receiverId, senderId) => {
     ).exec();
 
     await session.commitTransaction();
-    console.log(updateReceiverFriend);
+    console.log('updateReceiverFriend', updateReceiverFriend);
     console.log('---------------------');
-    console.log(updateSenderFriend);
+    console.log('updateSenderFriend', updateSenderFriend);
     return 'Accept friend success';
   } catch (error) {
     await session.abortTransaction();
@@ -131,8 +132,8 @@ const rejectFriend = async (receiverId, senderId) => {
     ).exec();
 
     await session.commitTransaction();
-    console.log(updateReceiverFriend);
-    console.log(updateSenderFriend);
+    console.log('updateReceiverFriend', updateReceiverFriend);
+    console.log('updateSenderFriend', updateSenderFriend);
     return 'Reject friend success';
   } catch (error) {
     await session.abortTransaction();
