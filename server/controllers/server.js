@@ -1,4 +1,3 @@
-const { User } = require('../models/schema');
 const Server = require('../models/server');
 
 const createServer = async (req, res) => {
