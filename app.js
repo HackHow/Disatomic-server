@@ -20,6 +20,7 @@ app.use('/api/' + API_VERSION, [
   require('./server/routes/upload_images'),
   require('./server/routes/user'),
   require('./server/routes/server'),
+  require('./server/routes/channel'),
 ]);
 
 // socket.io
