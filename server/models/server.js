@@ -22,7 +22,7 @@ const createServer = async (userId, serverName) => {
         },
       ],
       { session: session }
-    ).select();
+    );
 
     const user = await User.findByIdAndUpdate(
       userId,
