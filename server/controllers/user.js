@@ -3,11 +3,13 @@ const User = require('../models/user');
 const { SECRET, EXPIRED } = process.env;
 const { jwtSign } = require('../../utils/util');
 const argon2 = require('argon2');
+const random = require('random');
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
+  const newName = name + '#' + random.int(1000, 9999);
   const hashPassword = await argon2.hash(password);
-  const result = await User.signUp(name, email, hashPassword);
+  const result = await User.signUp(newName, email, hashPassword);
 
   if (result.error) {
     res.status(403).send(result.error);
