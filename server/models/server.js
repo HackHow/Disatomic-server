@@ -1,8 +1,15 @@
 const conn = require('../../utils/mongodb');
 const { User, Server } = require('../models/schema');
 
+const USER_ROLE = {
+  0: 'owner',
+  1: 'administer',
+  2: 'writer',
+  3: 'read',
+  4: 'null',
+};
+
 const createServer = async (userId, serverName) => {
-  console.log({ 'userId': userId, 'serverName': serverName });
   const session = await conn.startSession();
   try {
     session.startTransaction();
@@ -11,17 +18,18 @@ const createServer = async (userId, serverName) => {
         {
           serverName: serverName,
           members: [userId],
+          roles: { title: USER_ROLE[0], users: [userId] },
         },
       ],
       { session: session }
-    );
+    ).select();
 
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        $push: {
+        $addToSet: {
           servers: {
-            server: serverName,
+            userRoles: server[0].roles[0]._id,
             serverId: server[0]._id,
           },
         },
@@ -30,13 +38,12 @@ const createServer = async (userId, serverName) => {
     ).exec();
 
     await session.commitTransaction();
-    console.log('server', server);
-    console.log('--------');
-    console.log('user', user);
-    return 'Create server success';
+
+    return { serverId: server[0]._id };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
+    return { error };
   } finally {
     session.endSession();
   }
@@ -90,4 +97,4 @@ const userOwnServer = async (userId) => {
   }
 };
 
-module.exports = { createServer, deleteServer, userOwnServer };
+module.exports = { USER_ROLE, createServer, deleteServer, userOwnServer };
