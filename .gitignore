@@ -3,5 +3,6 @@ public/assets/
 .env
 # test files
 test.js
+test2.js
 schema.js
 public/index.html
