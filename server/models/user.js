@@ -8,8 +8,8 @@ const signUp = async (name, email, password) => {
       email,
       password,
     });
-    console.log(user);
-    return 'Register Success';
+    console.log('Register Success');
+    return user;
   } catch (error) {
     console.log('error', error.message);
     return { error: 'Email Already Exists' };
@@ -26,7 +26,7 @@ const signIn = async (email) => {
   }
 };
 
-const profile = async (userId) => {
+const profile = async (email) => {
   try {
     const user = await User.findById(userId);
     return user;
