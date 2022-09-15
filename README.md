@@ -1,5 +1,10 @@
 ## **This is Disatomic project with Express**
 
+**_2022/09/15_**
+
+- **Modify signIn signUp api log**
+- **Add userInfo api**
+
 **_2022/09/13_**
 
 - **Add user own server api**
