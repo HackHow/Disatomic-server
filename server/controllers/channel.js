@@ -1,8 +1,13 @@
 const Channel = require('../models/channel');
 
 const createChannel = async (req, res) => {
-  const { serverId, channelTitle, isPublic } = req.body;
-  const result = await Channel.createChannel(serverId, channelTitle, isPublic);
+  const { serverId, channelTitle, isPublic, userId } = req.body;
+  const result = await Channel.createChannel(
+    serverId,
+    channelTitle,
+    isPublic,
+    userId
+  );
 
   console.log('result', result);
 
@@ -25,4 +30,21 @@ const getChannel = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { createChannel, deleteChannel, getChannel };
+const inviteFriendToChannel = async (req, res) => {
+  const { serverId, channelId, friendId } = req.body;
+  const result = await Channel.inviteFriendToChannel(
+    serverId,
+    channelId,
+    friendId
+  );
+
+  console.log(result);
+  res.send(result);
+};
+
+module.exports = {
+  createChannel,
+  deleteChannel,
+  getChannel,
+  inviteFriendToChannel,
+};

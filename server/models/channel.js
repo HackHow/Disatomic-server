@@ -2,21 +2,22 @@ const conn = require('../../utils/mongodb');
 const { User, Server } = require('../models/schema');
 
 // 之後要加權限 role
-const createChannel = async (serverId, channelTitle, isPublic) => {
+const createChannel = async (serverId, channelTitle, isPublic, userId) => {
   try {
     const channel = await Server.findByIdAndUpdate(
       serverId,
       {
         category: {
           channel: {
-            title: channelTitle,
+            title: 'AAAA',
             isPublic: isPublic,
+            members: { userName: userId, permission: 'owner' },
           },
         },
       },
       { new: true }
     );
-
+    // console.log(channel.category.length);
     console.log(channel.category[0].channel);
 
     return 'Create channel success';
@@ -55,4 +56,34 @@ const getChannel = async (channelId) => {
   }
 };
 
-module.exports = { createChannel, deleteChannel, getChannel };
+const inviteFriendToChannel = async (serverId, channelId, friendId) => {
+  console.log(friendId);
+  try {
+    const channel = await Server.findOneAndUpdate(
+      { 'category.channel._id': '6321db2b42dcf64401411111' },
+      {
+        $addToSet: { $each: { members: friendId } },
+        $addToSet: {
+          'category.0.channel.$.members': {
+            userName: friendId,
+            permission: 'admin',
+          },
+        },
+      },
+      { new: true }
+    );
+
+    console.log(channel);
+    // console.log(channel.category[0].channel[0]);
+    return 'OK';
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  createChannel,
+  deleteChannel,
+  getChannel,
+  inviteFriendToChannel,
+};
