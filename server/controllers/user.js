@@ -4,6 +4,7 @@ const { SECRET, EXPIRED } = process.env;
 const { jwtSign } = require('../../utils/util');
 const argon2 = require('argon2');
 const random = require('random');
+const validator = require('validator');
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
@@ -22,6 +23,12 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
   const { email, password } = req.body;
+
+  if (!validator.isEmail(email)) {
+    res.status(400).send('Invalid email format');
+    return;
+  }
+
   const result = await User.signIn(email);
 
   if (result !== null) {
