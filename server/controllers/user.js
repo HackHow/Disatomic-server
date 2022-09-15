@@ -51,14 +51,14 @@ const userInfo = async (req, res) => {
   const { servers, friends } = await User.userInfo(userId);
 
   if (servers === undefined || friends === undefined) {
-    res.status(404).send('User ID not found');
+    res.status(403).send('User ID not found');
     return;
   }
 
   const userOwnServers = servers.map((item) => item.serverId.serverName);
   const userOwnFriends = friends.map((item) => item.name);
 
-  res.send({ userOwnServers, userOwnFriends });
+  res.status(200).send({ userOwnServers, userOwnFriends });
   return;
 };
 
