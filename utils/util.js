@@ -5,6 +5,7 @@ const path = require('path');
 const dayjs = require('dayjs');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+const { SECRET } = process.env;
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -38,4 +39,36 @@ const jwtVerify = async (token, secret) => {
   return await promisify(jwt.verify)(token, secret);
 };
 
-module.exports = { upload, jwtSign, jwtVerify };
+const authorization = async (req, res, next) => {
+  let accessToken = req.get('Authorization');
+  if (!accessToken) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  accessToken = accessToken.split(' ')[1];
+  if (accessToken === null) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+  try {
+    const user = await jwtVerify(accessToken, SECRET);
+    req.user = user;
+    next();
+    return;
+  } catch (error) {
+    res.status(403).send({ error: 'Forbidden' });
+    return;
+  }
+
+  // console.log(user);
+  // {
+  //   name: 'how',
+  //   email: 'test22@test.com',
+  //   password: '123456',
+  //   iat: 1663219615,
+  //   exp: 1663306015
+  // }
+};
+
+module.exports = { upload, jwtSign, jwtVerify, authorization };
