@@ -17,11 +17,7 @@ const signUp = async (req, res) => {
     return;
   }
 
-  const jwtToken = await jwtSign(
-    { userId: result._id, email: result.email },
-    SECRET,
-    EXPIRED
-  );
+  const jwtToken = await jwtSign({ userId: result._id }, SECRET, EXPIRED);
   res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
 };
 
@@ -37,11 +33,7 @@ const signIn = async (req, res) => {
 
   if (result !== null) {
     if (await argon2.verify(result.password, password)) {
-      const jwtToken = await jwtSign(
-        { userId: result._id, email: result.email },
-        SECRET,
-        EXPIRED
-      );
+      const jwtToken = await jwtSign({ userId: result._id }, SECRET, EXPIRED);
       res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
       return;
     } else {
@@ -54,15 +46,20 @@ const signIn = async (req, res) => {
   }
 };
 
-const profile = async (req, res) => {
-  const { email } = req.user;
-  const result = await User.profile(email);
-  console.log('result', result);
+const userInfo = async (req, res) => {
+  const { userId } = req.user;
+  const { servers, friends } = await User.userInfo(userId);
 
-  if (result !== null) {
-    // console.log(result.name, result.email);
-    res.status(200).send({ name: result.name, email: result.email });
+  if (servers === undefined || friends === undefined) {
+    res.status(404).send('User ID not found');
+    return;
   }
+
+  const userOwnServers = servers.map((item) => item.serverId.serverName);
+  const userOwnFriends = friends.map((item) => item.name);
+
+  res.send({ userOwnServers, userOwnFriends });
+  return;
 };
 
 const sendFriendInvitation = async (req, res) => {
@@ -100,7 +97,7 @@ const cancelFriend = async (req, res) => {
 module.exports = {
   signUp,
   signIn,
-  profile,
+  userInfo,
   sendFriendInvitation,
   acceptFriend,
   rejectFriend,

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {
   signUp,
   signIn,
-  profile,
+  userInfo,
   sendFriendInvitation,
   acceptFriend,
   rejectFriend,
@@ -12,8 +12,7 @@ const { authorization } = require('../../utils/util');
 
 router.route('/user/signup').post(signUp);
 router.route('/user/signin').post(signIn);
-
-router.route('/user').get(authorization, profile);
+router.route('/user').get(authorization, userInfo);
 
 router.route('/user/friend').post(sendFriendInvitation);
 // router.route('/user/friend/pending').get();

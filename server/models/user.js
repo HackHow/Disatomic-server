@@ -1,5 +1,6 @@
 const conn = require('../../utils/mongodb');
 const { User } = require('../models/schema');
+const mongoose = require('mongoose');
 
 const signUp = async (name, email, password) => {
   try {
@@ -26,12 +27,23 @@ const signIn = async (email) => {
   }
 };
 
-const profile = async (email) => {
+const userInfo = async (userId) => {
   try {
-    const user = await User.findById(userId);
-    return user;
+    const { servers } = await User.findById(userId)
+      .populate({
+        path: 'servers.serverId',
+        select: { _id: 0, serverName: '$serverName' },
+      })
+      .exec();
+
+    const { friends } = await User.findById(userId).populate({
+      path: 'friends',
+      select: { _id: 0, name: '$name' },
+    });
+
+    return { servers, friends };
   } catch (error) {
-    console.log('error:', error.message);
+    return error;
   }
 };
 
@@ -181,7 +193,7 @@ const cancelFriend = async (senderId, receiverId) => {
 module.exports = {
   signUp,
   signIn,
-  profile,
+  userInfo,
   sendFriendInvitation,
   acceptFriend,
   rejectFriend,
