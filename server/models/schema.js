@@ -153,7 +153,8 @@ const serverSchema = new Schema({
           ],
           members: [
             {
-              id: {
+              _id: false,
+              userName: {
                 // Howard
                 type: Schema.Types.ObjectId,
                 ref: 'User',
