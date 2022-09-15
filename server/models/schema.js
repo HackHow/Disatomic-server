@@ -67,6 +67,8 @@ const userSchema = new Schema({
     // test@test.com
     type: String,
     required: true,
+    unique: true,
+    uniqueCaseInsensitive: true,
   },
   password: {
     // ******
