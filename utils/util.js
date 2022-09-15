@@ -6,6 +6,7 @@ const dayjs = require('dayjs');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const { SECRET } = process.env;
+const { USER_ROLE } = require('../server/models/server');
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -51,6 +52,7 @@ const authorization = async (req, res, next) => {
     res.status(401).send('Unauthorized');
     return;
   }
+
   try {
     const user = await jwtVerify(accessToken, SECRET);
     req.user = user;
@@ -60,15 +62,6 @@ const authorization = async (req, res, next) => {
     res.status(403).send({ error: 'Forbidden' });
     return;
   }
-
-  // console.log(user);
-  // {
-  //   name: 'how',
-  //   email: 'test22@test.com',
-  //   password: '123456',
-  //   iat: 1663219615,
-  //   exp: 1663306015
-  // }
 };
 
 module.exports = { upload, jwtSign, jwtVerify, authorization };
