@@ -39,7 +39,7 @@ const createServer = async (userId, serverName) => {
 
     await session.commitTransaction();
 
-    return { serverId: server[0]._id };
+    return { serverId: server[0]._id, serverName: server[0].serverName };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
