@@ -14,30 +14,58 @@ const sendInvitationToFriend = async (req, res) => {
   return;
 };
 
-const acceptFriend = async (req, res) => {
+const acceptInvitation = async (req, res) => {
   const { receiverId, senderId } = req.body;
-  const result = await User.acceptFriend(receiverId, senderId);
+  // const { userId } = req.user;
+  const result = await User.acceptInvitation(receiverId, senderId);
+
+  res.status(200).send(result);
+};
+
+const rejectInvitation = async (req, res) => {
+  const { receiverId, senderId } = req.body;
+  const result = await User.rejectInvitation(receiverId, senderId);
 
   res.send(result);
 };
 
-const rejectFriend = async (req, res) => {
-  const { receiverId, senderId } = req.body;
-  const result = await User.rejectFriend(receiverId, senderId);
-
-  res.send(result);
-};
-
-const cancelFriend = async (req, res) => {
+const cancelInvitation = async (req, res) => {
   const { senderId, receiverId } = req.body;
-  const result = await User.cancelFriend(senderId, receiverId);
+  const result = await User.cancelInvitation(senderId, receiverId);
 
   res.send(result);
+};
+
+const getPendingFriends = async (req, res) => {
+  const { userId } = req.user;
+  const result = await User.getPendingFriends(userId);
+
+  if (result.error) {
+    res.status(500).send({ error: 'Database Query Error' });
+    return;
+  }
+
+  const outgoingRequest = result.outgoingRequest;
+  const incomingRequest = result.incomingRequest;
+
+  res.status(200).send({ outgoingRequest, incomingRequest });
+  return;
+};
+
+const getAllFriends = async (req, res) => {
+  const { userId } = req.user;
+  const result = await User.getAllFriends(userId);
+
+  console.log(result);
+
+  res.send('Hello');
 };
 
 module.exports = {
   sendInvitationToFriend,
-  acceptFriend,
-  rejectFriend,
-  cancelFriend,
+  acceptInvitation,
+  rejectInvitation,
+  cancelInvitation,
+  getPendingFriends,
+  getAllFriends,
 };

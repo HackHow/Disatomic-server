@@ -2,16 +2,19 @@ const router = require('express').Router();
 const { authentication } = require('../../utils/util');
 const {
   sendInvitationToFriend,
-  acceptFriend,
-  rejectFriend,
-  cancelFriend,
+  acceptInvitation,
+  rejectInvitation,
+  cancelInvitation,
+  getPendingFriends,
+  getAllFriends,
 } = require('../controllers/friend');
 
 router.route('/friend').post(authentication, sendInvitationToFriend);
-// router.route('/user/friend/pending').get();
-router.route('/friend/accept').post(acceptFriend);
-router.route('/friend/reject').post(rejectFriend);
-router.route('/friend/cancel').post(cancelFriend);
-// router.route('/user/friend/:state').get();
+router.route('/friend/pending').get(authentication, getPendingFriends);
+router.route('/friend/All').get(authentication, getAllFriends);
+
+router.route('/friend/accept').post(acceptInvitation);
+router.route('/friend/reject').post(authentication, rejectInvitation);
+router.route('/friend/cancel').post(authentication, cancelInvitation);
 
 module.exports = router;
