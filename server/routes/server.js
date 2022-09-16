@@ -4,9 +4,9 @@ const {
   deleteServer,
   userOwnServer,
 } = require('../controllers/server');
-const { authorization } = require('../../utils/util');
+const { authentication } = require('../../utils/util');
 
-router.route('/server').post(authorization, createServer);
+router.route('/server').post(authentication, createServer);
 router.route('/server').delete(deleteServer);
 // router.route('/server').get(userOwnServer);
 
