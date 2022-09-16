@@ -40,7 +40,7 @@ const jwtVerify = async (token, secret) => {
   return await promisify(jwt.verify)(token, secret);
 };
 
-const authorization = async (req, res, next) => {
+const authentication = async (req, res, next) => {
   let accessToken = req.get('Authorization');
   if (!accessToken) {
     res.status(401).send('Unauthorized');
@@ -64,4 +64,4 @@ const authorization = async (req, res, next) => {
   }
 };
 
-module.exports = { upload, jwtSign, jwtVerify, authorization };
+module.exports = { upload, jwtSign, jwtVerify, authentication };
