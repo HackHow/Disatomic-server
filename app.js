@@ -6,6 +6,9 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const cors = require('cors');
 const { API_VERSION, PORT } = process.env;
+const Friend = require('./server/models/friend');
+const { jwtVerify } = require('./utils/util');
+const { SECRET } = process.env;
 
 app.use(cors());
 app.use(express.static('public'));
@@ -29,21 +32,96 @@ const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
+const usersInfo = {};
+
+function saveOnlineUser(key, value) {
+  if (value) {
+    usersInfo[key] = value;
+  }
+  // console.log('Save new online User:', usersInfo);
+}
+
+function deleteOfflineUser(userId) {
+  if (usersInfo[userId]) {
+    delete usersInfo[userId];
+  }
+  // console.log('After Delete Offline User:', usersInfo);
+}
+
+function getOnlineFriend(friendList, allOnlineUser) {
+  const friendOnlineList = [];
+  if (friendList.length > 0) {
+    friendList.map((item) => {
+      if (allOnlineUser[item]) {
+        friendOnlineList.push(allOnlineUser[item]);
+      } else {
+        console.log('No Friend in Online');
+      }
+    });
+  } else {
+    console.log('You have not Friend');
+  }
+  return friendOnlineList;
+}
+
+io.use(async (socket, next) => {
+  let token = socket.handshake.auth.token;
+  if (!token) return next();
+
+  let userFriendId;
+
+  try {
+    token = token.replace('Bearer ', '');
+    const { userId, userName } = await jwtVerify(token, SECRET);
+    socket.userId = userId;
+    socket.userName = userName;
+    const friends = await Friend.getAllFriends(userId);
+
+    if (friends.length !== 0) {
+      userFriendId = friends.map((item) => item._id);
+    } else {
+      userFriendId = [];
+      console.log('Friends is empty');
+    }
+
+    socket.userFriendId = userFriendId;
+  } catch (error) {
+    console.log(error);
+    next(err);
+  }
+  next();
+});
+
 io.on('connection', (socket) => {
-  console.log(`User Connected ${socket.id}`);
+  // console.log(`User Connected: ${socket.id}`);
+  saveOnlineUser(socket.userId, socket.id);
+  const friendOnlineList = getOnlineFriend(socket.userFriendId, usersInfo);
 
-  socket.on('sendMessage', (data) => {
-    console.log('front-end sent data', data);
-
-    io.emit('receiveMessage', data);
-  });
+  if (friendOnlineList.length > 0) {
+    socket.to(friendOnlineList).emit('friendState', {
+      socketId: socket.id,
+      userName: socket.userName,
+      state: 'online',
+    });
+  } else {
+    console.log(socket.userId, ': friendOnlineList is empty');
+  }
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    console.log('user disconnected:', socket.id);
+    deleteOfflineUser(socket.userId);
+    // deleteOfflineFriend(friendOnlineList, socket.id);
+    console.log('================');
   });
+});
+
+app.use(function (err, req, res, next) {
+  console.log(err);
+  res.status(500).send('Internal Server Error');
 });
 
 server.listen(PORT, () => {
