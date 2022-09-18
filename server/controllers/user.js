@@ -17,7 +17,11 @@ const signUp = async (req, res) => {
     return;
   }
 
-  const jwtToken = await jwtSign({ userId: result._id }, SECRET, EXPIRED);
+  const jwtToken = await jwtSign(
+    { userId: result._id, userName: result.name },
+    SECRET,
+    EXPIRED
+  );
   res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
 };
 
@@ -33,7 +37,11 @@ const signIn = async (req, res) => {
 
   if (result !== null) {
     if (await argon2.verify(result.password, password)) {
-      const jwtToken = await jwtSign({ userId: result._id }, SECRET, EXPIRED);
+      const jwtToken = await jwtSign(
+        { userId: result._id, userName: result.name },
+        SECRET,
+        EXPIRED
+      );
       res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
       return;
     } else {
@@ -58,42 +66,10 @@ const userInfo = async (req, res) => {
   const userOwnServers = servers.map((item) => item.serverId.serverName);
   const userOwnFriends = friends.map((item) => item.name);
 
-  res.status(200).send({ userOwnServers, userOwnFriends });
+  res.status(200).send({ userId, userOwnServers, userOwnFriends });
   return;
 };
 
-// const sendFriendInvitation = async (req, res) => {
-//   const { senderId, friendName } = req.body;
-//   const result = await User.sendFriendInvitation(senderId, friendName);
-
-//   if (result.error) {
-//     res.status(403).send(result.error);
-//     return;
-//   }
-//   res.status(200).send(result);
-//   return;
-// };
-
-// const acceptFriend = async (req, res) => {
-//   const { receiverId, senderId } = req.body;
-//   const result = await User.acceptFriend(receiverId, senderId);
-
-//   res.send(result);
-// };
-
-// const rejectFriend = async (req, res) => {
-//   const { receiverId, senderId } = req.body;
-//   const result = await User.rejectFriend(receiverId, senderId);
-
-//   res.send(result);
-// };
-
-// const cancelFriend = async (req, res) => {
-//   const { senderId, receiverId } = req.body;
-//   const result = await User.cancelFriend(senderId, receiverId);
-
-//   res.send(result);
-// };
 module.exports = {
   signUp,
   signIn,
