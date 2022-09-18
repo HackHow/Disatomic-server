@@ -1,10 +1,10 @@
 require('dotenv').config();
-const User = require('../models/friend');
+const Friend = require('../models/friend');
 
 const sendInvitationToFriend = async (req, res) => {
   const { userId } = req.user;
   const { friendName } = req.body;
-  const result = await User.sendInvitationToFriend(userId, friendName);
+  const result = await Friend.sendInvitationToFriend(userId, friendName);
 
   if (result.error) {
     res.status(403).send(result.error);
@@ -17,28 +17,28 @@ const sendInvitationToFriend = async (req, res) => {
 const acceptInvitation = async (req, res) => {
   const { receiverId, senderId } = req.body;
   // const { userId } = req.user;
-  const result = await User.acceptInvitation(receiverId, senderId);
+  const result = await Friend.acceptInvitation(receiverId, senderId);
 
   res.status(200).send(result);
 };
 
 const rejectInvitation = async (req, res) => {
   const { receiverId, senderId } = req.body;
-  const result = await User.rejectInvitation(receiverId, senderId);
+  const result = await Friend.rejectInvitation(receiverId, senderId);
 
   res.send(result);
 };
 
 const cancelInvitation = async (req, res) => {
   const { senderId, receiverId } = req.body;
-  const result = await User.cancelInvitation(senderId, receiverId);
+  const result = await Friend.cancelInvitation(senderId, receiverId);
 
   res.send(result);
 };
 
 const getPendingFriends = async (req, res) => {
   const { userId } = req.user;
-  const result = await User.getPendingFriends(userId);
+  const result = await Friend.getPendingFriends(userId);
 
   if (result.error) {
     res.status(500).send({ error: 'Database Query Error' });
@@ -54,7 +54,7 @@ const getPendingFriends = async (req, res) => {
 
 const getAllFriends = async (req, res) => {
   const { userId } = req.user;
-  const result = await User.getAllFriends(userId);
+  const result = await Friend.getAllFriends(userId);
 
   console.log(result);
 
