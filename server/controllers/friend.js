@@ -56,9 +56,14 @@ const getAllFriends = async (req, res) => {
   const { userId } = req.user;
   const result = await Friend.getAllFriends(userId);
 
-  console.log(result);
+  if (result.error) {
+    res.status(500).send({ error: 'Database Query Error' });
+    return;
+  }
 
-  res.send('Hello');
+  const friendsName = result.map((item) => item.name);
+
+  res.status(200).send(friendsName);
 };
 
 module.exports = {
