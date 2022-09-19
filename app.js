@@ -54,23 +54,21 @@ function deleteOfflineUser(userId) {
 
 function getOnlineFriend(friendList, allOnlineUser) {
   const friendOnlineList = [];
+  console.log('friendList', friendList);
   if (friendList.length > 0) {
     friendList.map((item) => {
       if (allOnlineUser[item]) {
         friendOnlineList.push(allOnlineUser[item]);
-      } else {
-        console.log('No Friend in Online');
       }
     });
-  } else {
-    console.log('You have not Friend');
   }
+  console.log('friendOnlineList:', friendOnlineList);
   return friendOnlineList;
 }
 
 io.use(async (socket, next) => {
   let token = socket.handshake.auth.token;
-  if (!token) return next();
+  if (!token) return next(new Error('test!!'));
 
   let userFriendId;
 
@@ -85,19 +83,18 @@ io.use(async (socket, next) => {
       userFriendId = friends.map((item) => item._id);
     } else {
       userFriendId = [];
-      console.log('Friends is empty');
     }
 
     socket.userFriendId = userFriendId;
   } catch (error) {
     console.log(error);
-    next(err);
+    next(error);
   }
   next();
 });
 
 io.on('connection', (socket) => {
-  // console.log(`User Connected: ${socket.id}`);
+  console.log(`User Connected: ${socket.id}`);
   saveOnlineUser(socket.userId, socket.id);
   const friendOnlineList = getOnlineFriend(socket.userFriendId, usersInfo);
 
@@ -107,8 +104,6 @@ io.on('connection', (socket) => {
       userName: socket.userName,
       state: 'online',
     });
-  } else {
-    console.log(socket.userId, ': friendOnlineList is empty');
   }
 
   socket.on('disconnect', () => {
