@@ -14,10 +14,6 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/public/index.html');
-// });
-
 // API routes
 app.use('/api/' + API_VERSION, [
   require('./server/routes/upload_images'),
@@ -36,56 +32,49 @@ const io = new Server(server, {
   },
 });
 
-const usersInfo = {};
+const allOnlineUser = {};
 
 function saveOnlineUser(key, value) {
   if (value) {
-    usersInfo[key] = value;
+    allOnlineUser[key] = value;
   }
-  // console.log('Save new online User:', usersInfo);
+  // console.log('Save new online User:', allOnlineUser);
 }
 
 function deleteOfflineUser(userId) {
-  if (usersInfo[userId]) {
-    delete usersInfo[userId];
+  if (allOnlineUser[userId]) {
+    delete allOnlineUser[userId];
   }
-  // console.log('After Delete Offline User:', usersInfo);
+  // console.log('After Delete Offline User:', allOnlineUser);
 }
 
-function getOnlineFriend(friendList, allOnlineUser) {
-  const friendOnlineList = [];
-  console.log('friendList', friendList);
-  if (friendList.length > 0) {
-    friendList.map((item) => {
-      if (allOnlineUser[item]) {
-        friendOnlineList.push(allOnlineUser[item]);
+function getOnlineFriend(allOnlineUser, friendInfo) {
+  const friendInOnline = [];
+  if (friendInfo.length > 0) {
+    friendInfo.map((item) => {
+      if (allOnlineUser[item.id]) {
+        friendInOnline.push({
+          friendId: item.id,
+          friendName: item.name,
+          state: 'online',
+        });
       }
     });
   }
-  console.log('friendOnlineList:', friendOnlineList);
-  return friendOnlineList;
+  return friendInOnline;
 }
 
 io.use(async (socket, next) => {
   let token = socket.handshake.auth.token;
-  if (!token) return next(new Error('test!!'));
-
-  let userFriendId;
+  token = token.replace('Bearer ', '');
+  if (token === 'null') return next();
 
   try {
-    token = token.replace('Bearer ', '');
     const { userId, userName } = await jwtVerify(token, SECRET);
+    const friends = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
-    const friends = await Friend.getAllFriends(userId);
-
-    if (friends.length !== 0) {
-      userFriendId = friends.map((item) => item._id);
-    } else {
-      userFriendId = [];
-    }
-
-    socket.userFriendId = userFriendId;
+    socket.friends = friends;
   } catch (error) {
     console.log(error);
     next(error);
@@ -95,21 +84,23 @@ io.use(async (socket, next) => {
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  saveOnlineUser(socket.userId, socket.id);
-  const friendOnlineList = getOnlineFriend(socket.userFriendId, usersInfo);
-
-  if (friendOnlineList.length > 0) {
-    socket.to(friendOnlineList).emit('friendState', {
-      socketId: socket.id,
-      userName: socket.userName,
-      state: 'online',
-    });
+  // console.log('socket.userId', socket.userId);
+  if (!socket.userId) {
+    return io.to(socket.id).emit('token', 'No token');
   }
+  saveOnlineUser(socket.userId, socket.id);
+
+  const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
+
+  socket.on('getOnlineFriend', () => {
+    if (friendOnlineList.length > 0) {
+      socket.emit('OnlineFriend', friendOnlineList);
+    }
+  });
 
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
     deleteOfflineUser(socket.userId);
-    // deleteOfflineFriend(friendOnlineList, socket.id);
     console.log('================');
   });
 });
