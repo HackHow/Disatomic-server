@@ -1,12 +1,12 @@
 const conn = require('../../utils/mongodb');
-const { User, Server } = require('../models/schema');
+// const { User, Server } = require('../models/schema');
+const { User, Server } = require('../models/test');
 
 const USER_ROLE = {
   0: 'owner',
-  1: 'administer',
+  1: 'administrator',
   2: 'writer',
-  3: 'read',
-  4: 'null',
+  3: 'reader',
 };
 
 const createServer = async (userId, serverName) => {
@@ -18,18 +18,32 @@ const createServer = async (userId, serverName) => {
         {
           serverName: serverName,
           members: [userId],
-          roles: { title: USER_ROLE[0], users: [userId] },
+          roles: [
+            {
+              permission: USER_ROLE[0],
+              usersId: [userId],
+            },
+            {
+              permission: USER_ROLE[1],
+            },
+            {
+              permission: USER_ROLE[2],
+            },
+            {
+              permission: USER_ROLE[3],
+            },
+          ],
         },
       ],
       { session: session }
     );
 
-    const user = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       userId,
       {
         $addToSet: {
           servers: {
-            userRoles: server[0].roles[0]._id,
+            userPermission: server[0].roles[0]._id,
             serverId: server[0]._id,
           },
         },
@@ -38,7 +52,6 @@ const createServer = async (userId, serverName) => {
     ).exec();
 
     await session.commitTransaction();
-
     return { serverId: server[0]._id, serverName: server[0].serverName };
   } catch (error) {
     await session.abortTransaction();
@@ -85,16 +98,32 @@ const deleteServer = async (userId, serverId) => {
   }
 };
 
-const userOwnServer = async (userId) => {
+const getServer = async (serverId) => {
   try {
-    const user = await User.findById(userId);
-    // console.log(user);
-    // console.log(user.servers);
-    return user.servers;
+    const server = await Server.findById(serverId);
+    return server;
   } catch (error) {
-    console.log(error);
-    return 'Get Server fail';
+    console.log('ERROR:', error);
+    return { error };
   }
 };
 
-module.exports = { USER_ROLE, createServer, deleteServer, userOwnServer };
+// const userOwnServer = async (userId) => {
+//   try {
+//     const user = await User.findById(userId);
+//     // console.log(user);
+//     // console.log(user.servers);
+//     return user.servers;
+//   } catch (error) {
+//     console.log(error);
+//     return 'Get Server fail';
+//   }
+// };
+
+module.exports = {
+  USER_ROLE,
+  getServer,
+  createServer,
+  deleteServer,
+  // userOwnServer,
+};

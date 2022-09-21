@@ -13,7 +13,7 @@ router.route('/friend').post(authentication, sendInvitationToFriend);
 router.route('/friend/pending').get(authentication, getPendingFriends);
 router.route('/friend/all').get(authentication, getAllFriends);
 
-router.route('/friend/accept').post(acceptInvitation);
+router.route('/friend/accept').post(authentication, acceptInvitation);
 router.route('/friend/reject').post(authentication, rejectInvitation);
 router.route('/friend/cancel').post(authentication, cancelInvitation);
 

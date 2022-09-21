@@ -1,5 +1,6 @@
 const conn = require('../../utils/mongodb');
-const { User, Server } = require('../models/schema');
+// const { User, Server } = require('../models/schema');
+const { User, Server } = require('../models/test');
 
 // 之後要加權限 role
 const createChannel = async (serverId, channelTitle, isPublic, userId) => {
@@ -7,23 +8,45 @@ const createChannel = async (serverId, channelTitle, isPublic, userId) => {
     const channel = await Server.findByIdAndUpdate(
       serverId,
       {
-        category: {
-          channel: {
-            title: 'AAAA',
+        $push: {
+          'category.0.channel': {
+            title: channelTitle,
             isPublic: isPublic,
             members: { userName: userId, permission: 'owner' },
           },
         },
       },
-      { new: true }
+      // {
+      //   $push: {
+      //     category: {
+      //       channel: {
+      //         title: channelTitle,
+      //         isPublic: isPublic,
+      //         members: { userName: userId, permission: 'owner' },
+      //       },
+      //     },
+      //   },
+      // },
+      {
+        fields: {
+          'category.channel.title': 1,
+          'category.channel.isPublic': 1,
+          'category.channel.members': 1,
+          'category.channel._id': 1,
+        },
+        new: true,
+      }
     );
     // console.log(channel.category.length);
-    console.log(channel.category[0].channel);
+    console.log(channel);
+    console.log(channel.category);
+    // console.log(channel.category[0].channel[0].members);
+    // console.log(channel.category[0].channel[3].members);
 
-    return 'Create channel success';
+    return channel.category[0].channel;
   } catch (error) {
     console.log(error);
-    return 'Create channel fail';
+    return { error: 'Create channel fail' };
   }
 };
 
@@ -49,7 +72,7 @@ const getChannel = async (channelId) => {
       'category.channel._id': channelId,
     });
 
-    console.log(channel.category[0].channel);
+    // console.log(channel.category[0].channel);
     return 'ok';
   } catch (error) {
     console.log(error);

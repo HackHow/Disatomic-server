@@ -30,4 +30,17 @@ const userOwnServer = async (req, res) => {
   res.send('OK');
 };
 
-module.exports = { createServer, deleteServer, userOwnServer };
+const getServer = async (req, res) => {
+  const { userId } = req.user;
+  const serverId = req.params['serverId'];
+  const result = await Server.getServer(serverId);
+
+  if (result.error) {
+    res.status(500).send('Database Query Error');
+    return;
+  }
+
+  res.send({ serverName: result.serverName });
+  return;
+};
+module.exports = { getServer, createServer, deleteServer, userOwnServer };

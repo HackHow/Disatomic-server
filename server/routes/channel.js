@@ -5,9 +5,10 @@ const {
   getChannel,
   inviteFriendToChannel,
 } = require('../controllers/channel');
+const { authentication } = require('../../utils/util');
 
-router.route('/channel').get(getChannel);
-router.route('/channel').post(createChannel);
+router.route('/channel/:channelId').get(authentication, getChannel);
+router.route('/channel').post(authentication, createChannel);
 router.route('/channel').delete(deleteChannel);
 
 router.route('/channel/friend').post(inviteFriendToChannel);

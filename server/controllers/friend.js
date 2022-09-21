@@ -10,13 +10,14 @@ const sendInvitationToFriend = async (req, res) => {
     res.status(403).send(result.error);
     return;
   }
+
   res.status(200).send(result);
   return;
 };
 
 const acceptInvitation = async (req, res) => {
-  const { receiverId, senderId } = req.body;
-  // const { userId } = req.user;
+  const { senderId } = req.body;
+  const receiverId = req.user.userId;
   const result = await Friend.acceptInvitation(receiverId, senderId);
 
   res.status(200).send(result);
@@ -30,10 +31,17 @@ const rejectInvitation = async (req, res) => {
 };
 
 const cancelInvitation = async (req, res) => {
-  const { senderId, receiverId } = req.body;
+  const senderId = req.user.userId;
+  const { receiverId } = req.body;
   const result = await Friend.cancelInvitation(senderId, receiverId);
 
-  res.send(result);
+  if (result.error) {
+    res.status(403).send(result.error);
+    return;
+  }
+
+  res.status(200).send(result);
+  return;
 };
 
 const getPendingFriends = async (req, res) => {
@@ -61,9 +69,7 @@ const getAllFriends = async (req, res) => {
     return;
   }
 
-  const friendsName = result.map((item) => item.name);
-
-  res.status(200).send(friendsName);
+  res.status(200).send(result);
 };
 
 module.exports = {

@@ -1,13 +1,19 @@
 const Channel = require('../models/channel');
 
 const createChannel = async (req, res) => {
-  const { serverId, channelTitle, isPublic, userId } = req.body;
+  const { userId } = req.user;
+  const { serverId, channelTitle, isPublic } = req.body;
   const result = await Channel.createChannel(
     serverId,
     channelTitle,
     isPublic,
     userId
   );
+
+  if (result.error) {
+    res.status(500).send(result.error);
+    return;
+  }
 
   console.log('result', result);
 

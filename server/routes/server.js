@@ -1,15 +1,14 @@
 const router = require('express').Router();
 const {
+  getServer,
   createServer,
   deleteServer,
-  userOwnServer,
+  // userOwnServer,
 } = require('../controllers/server');
 const { authentication } = require('../../utils/util');
 
 router.route('/server').post(authentication, createServer);
 router.route('/server').delete(deleteServer);
-// router.route('/server').get(userOwnServer);
-
-// router.route('/server/:serverId').get();
+router.route('/server/:serverId').get(authentication, getServer);
 
 module.exports = router;

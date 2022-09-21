@@ -1,5 +1,6 @@
 const conn = require('../../utils/mongodb');
-const { User } = require('../models/schema');
+// const { User } = require('../models/schema');
+const { User } = require('../models/test');
 
 const sendInvitationToFriend = async (senderId, friendName) => {
   const session = await conn.startSession();
@@ -8,7 +9,7 @@ const sendInvitationToFriend = async (senderId, friendName) => {
     const friend = await User.findOneAndUpdate(
       { name: friendName },
       {
-        $addToSet: { pendingFriends: senderId },
+        $addToSet: { incomingFriendReq: senderId },
         $set: { updatedAt: Date.now() },
       },
       { new: true }
@@ -17,15 +18,13 @@ const sendInvitationToFriend = async (senderId, friendName) => {
     const user = await User.findByIdAndUpdate(
       senderId,
       {
-        $addToSet: { inviteFriends: friend._id },
+        $addToSet: { outgoingFriendReq: friend._id },
         $set: { updatedAt: Date.now() },
       },
       { new: true }
     ).exec();
 
     await session.commitTransaction();
-
-    // return 'Outgoing Success';
     return 'Invite success';
   } catch (error) {
     await session.abortTransaction();
@@ -37,32 +36,28 @@ const sendInvitationToFriend = async (senderId, friendName) => {
 };
 
 const acceptInvitation = async (receiverId, senderId) => {
-  console.log({ receiverId, senderId });
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const updateReceiverPending = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       receiverId,
       {
-        $pull: { pendingFriends: senderId },
+        $pull: { incomingFriendReq: senderId },
         $addToSet: { friends: senderId },
       },
       { new: true }
     ).exec();
 
-    const updateSenderInvite = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       senderId,
       {
-        $pull: { inviteFriends: receiverId },
+        $pull: { outgoingFriendReq: receiverId },
         $addToSet: { friends: receiverId },
       },
       { new: true }
     ).exec();
 
     await session.commitTransaction();
-    console.log('updateReceiverPending', updateReceiverPending);
-    console.log('---------------------');
-    console.log('updateSenderInvite', updateSenderInvite);
     return 'Accept friend success';
   } catch (error) {
     await session.abortTransaction();
@@ -80,7 +75,7 @@ const rejectInvitation = async (receiverId, senderId) => {
     const updateReceiverPending = await User.findByIdAndUpdate(
       receiverId,
       {
-        $pull: { pendingFriends: senderId },
+        $pull: { incomingFriendReq: senderId },
       },
       { new: true }
     ).exec();
@@ -88,7 +83,7 @@ const rejectInvitation = async (receiverId, senderId) => {
     const updateSenderInvite = await User.findByIdAndUpdate(
       senderId,
       {
-        $pull: { inviteFriends: receiverId },
+        $pull: { outgoingFriendReq: receiverId },
       },
       { new: true }
     ).exec();
@@ -107,29 +102,26 @@ const rejectInvitation = async (receiverId, senderId) => {
 };
 
 const cancelInvitation = async (senderId, receiverId) => {
-  console.log({ senderId, receiverId });
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const updateSenderInvite = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       senderId,
       {
-        $pull: { inviteFriends: receiverId },
+        $pull: { outgoingFriendReq: receiverId },
       },
       { new: true }
     ).exec();
 
-    const updateReceiverPending = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       receiverId,
       {
-        $pull: { pendingFriends: senderId },
+        $pull: { incomingFriendReq: senderId },
       },
       { new: true }
     ).exec();
 
     await session.commitTransaction();
-    console.log(updateReceiverPending);
-    console.log(updateSenderInvite);
     return 'Cancel friend success';
   } catch (error) {
     await session.abortTransaction();
@@ -143,15 +135,16 @@ const cancelInvitation = async (senderId, receiverId) => {
 const getPendingFriends = async (userId) => {
   try {
     const user = await User.findById(userId).populate({
-      path: 'inviteFriends pendingFriends',
+      path: 'outgoingFriendReq incomingFriendReq',
       select: {
         name: '$name',
       },
     });
-    const outgoingRequest = user.inviteFriends;
-    const incomingRequest = user.pendingFriends;
-    console.log('outgoingRequest', outgoingRequest);
-    console.log('incomingRequest', incomingRequest);
+
+    const outgoingRequest = user.outgoingFriendReq;
+    const incomingRequest = user.incomingFriendReq;
+    // console.log('outgoingRequest', outgoingRequest);
+    // console.log('incomingRequest', incomingRequest);
 
     return { outgoingRequest, incomingRequest };
   } catch (error) {
@@ -168,6 +161,8 @@ const getAllFriends = async (userId) => {
         name: '$name',
       },
     });
+
+    // console.log('user', user);
     return user.friends;
   } catch (error) {
     console.log(error);

@@ -2,9 +2,39 @@ const mongoose = require('mongoose');
 
 const { Schema, model } = mongoose;
 
+const personalChatSchema = new Schema({
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  content: String,
+  links: [
+    {
+      url: String, // Can be null
+    },
+  ],
+  files: [
+    {
+      url: String, // Can be null
+    },
+  ],
+  createdAt: {
+    type: Date,
+    immutable: true,
+    default: () => Date.now(),
+  },
+});
+
 const chatSchema = new Schema([
   {
-    sender: { type: String, required: true },
+    sender: {
+      type: String,
+      required: true,
+    },
     content: String,
     links: [
       {
@@ -64,14 +94,12 @@ const userSchema = new Schema({
     required: true,
   },
   email: {
-    // test@test.com
     type: String,
     required: true,
     unique: true,
     uniqueCaseInsensitive: true,
   },
   password: {
-    // ******
     type: String,
     required: true,
   },
@@ -95,9 +123,9 @@ const userSchema = new Schema({
   ],
   servers: [
     {
-      _id: false,
       // server: String, // 'AppWork School',
       // userRoles: [String], // ['BackEnd', 'Teacher'],
+      _id: false,
       userRoles: {
         type: Schema.Types.ObjectId,
         ref: 'Server',

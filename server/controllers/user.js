@@ -63,10 +63,15 @@ const userInfo = async (req, res) => {
     return;
   }
 
-  const userOwnServers = servers.map((item) => item.serverId.serverName);
-  const userOwnFriends = friends.map((item) => item.name);
+  const userOwnServers = servers.map((item) => {
+    return {
+      serverId: item.serverId._id,
+      serverName: item.serverId.serverName,
+    };
+  });
+  // const userOwnFriends = friends.map((item) => item.name);
 
-  res.status(200).send({ userId, userOwnServers, userOwnFriends });
+  res.status(200).send({ userId, userOwnServers });
   return;
 };
 
@@ -74,8 +79,4 @@ module.exports = {
   signUp,
   signIn,
   userInfo,
-  // sendFriendInvitation,
-  // acceptFriend,
-  // rejectFriend,
-  // cancelFriend,
 };
