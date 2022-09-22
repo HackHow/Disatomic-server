@@ -98,9 +98,10 @@ const deleteServer = async (userId, serverId) => {
   }
 };
 
-const getServer = async (serverId) => {
+const getServerInfo = async (serverId) => {
   try {
     const server = await Server.findById(serverId);
+    getServerInfo;
     return server;
   } catch (error) {
     console.log('ERROR:', error);
@@ -108,22 +109,9 @@ const getServer = async (serverId) => {
   }
 };
 
-// const userOwnServer = async (userId) => {
-//   try {
-//     const user = await User.findById(userId);
-//     // console.log(user);
-//     // console.log(user.servers);
-//     return user.servers;
-//   } catch (error) {
-//     console.log(error);
-//     return 'Get Server fail';
-//   }
-// };
-
 module.exports = {
   USER_ROLE,
-  getServer,
+  getServerInfo,
   createServer,
   deleteServer,
-  // userOwnServer,
 };

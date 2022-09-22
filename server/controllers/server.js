@@ -23,24 +23,27 @@ const deleteServer = async (req, res) => {
   res.status(200).send('Delete server success');
 };
 
-const userOwnServer = async (req, res) => {
-  const { userId } = req.body;
-  const result = await Server.ownServer(userId);
-  console.log(result.map((item) => item.server));
-  res.send('OK');
-};
-
-const getServer = async (req, res) => {
-  const { userId } = req.user;
+const getServerInfo = async (req, res) => {
+  // const { userId } = req.user;
+  console.log('req.io', req.io);
+  console.log('req.socket', req.socket);
   const serverId = req.params['serverId'];
-  const result = await Server.getServer(serverId);
+  const result = await Server.getServerInfo(serverId);
 
   if (result.error) {
     res.status(500).send('Database Query Error');
     return;
   }
 
-  res.send({ serverName: result.serverName });
+  const channelList = result.channel.map((item) => {
+    return {
+      channelId: item._id,
+      channelName: item.title,
+      isPublic: item.isPublic,
+    };
+  });
+
+  res.send({ serverName: result.serverName, channelList: channelList });
   return;
 };
-module.exports = { getServer, createServer, deleteServer, userOwnServer };
+module.exports = { getServerInfo, createServer, deleteServer };

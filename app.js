@@ -14,6 +14,11 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // API routes
 app.use('/api/' + API_VERSION, [
   require('./server/routes/upload_images'),
@@ -70,11 +75,13 @@ io.use(async (socket, next) => {
   if (token === 'null') return next();
 
   try {
-    const { userId, userName } = await jwtVerify(token, SECRET);
+    const { userId, userName, userChannel } = await jwtVerify(token, SECRET);
     const friends = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
     socket.friends = friends;
+    socket.userChannel = userChannel;
+    console.log('userChannel', userChannel[0]);
   } catch (error) {
     console.log(error);
     next(error);
@@ -88,13 +95,27 @@ io.on('connection', (socket) => {
   if (!socket.userId) {
     return io.to(socket.id).emit('token', 'No token');
   }
-  saveOnlineUser(socket.userId, socket.id);
 
+  saveOnlineUser(socket.userId, socket.id);
   const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
 
   socket.on('getOnlineFriend', () => {
     if (friendOnlineList.length > 0) {
       socket.emit('OnlineFriend', friendOnlineList);
+    }
+  });
+
+  socket.on('join', (channelRoom) => {
+    console.log('channelRoom:', channelRoom);
+    socket.join(channelRoom);
+  });
+
+  // socket.to(channelRoom)
+
+  socket.on('channelSendMessage', (msg) => {
+    if (msg.content) {
+      console.log('channelSendMessage', msg);
+      io.to(msg.channelId).emit('channelReceiveMessage', msg.content);
     }
   });
 

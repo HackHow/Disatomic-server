@@ -13,15 +13,15 @@ const upload = multer({
     destination: (req, file, cb) => {
       // console.log('multer req.body', req.body);
       // const pictureName = req.body.images;
-      const imagesPath = path.join(
+      const filesPath = path.join(
         process.cwd(),
         `/public/assets/`,
         dayjs(Date.now()).format('YYYYMMDD')
       );
-      if (!fs.existsSync(imagesPath)) {
-        fs.mkdirSync(imagesPath, { recursive: true });
+      if (!fs.existsSync(filesPath)) {
+        fs.mkdirSync(filesPath, { recursive: true });
       }
-      cb(null, imagesPath);
+      cb(null, filesPath);
     },
     filename: (req, file, cb) => {
       // const fileExtension = file.mimetype.split('/')[1];

@@ -15,9 +15,14 @@ const createChannel = async (req, res) => {
     return;
   }
 
-  console.log('result', result);
+  const channelInfo = result.map((item) => {
+    return {
+      channelId: item._id,
+      channelName: item.title,
+    };
+  });
 
-  res.send(result);
+  res.status(200).send(channelInfo);
 };
 
 const deleteChannel = async (req, res) => {
@@ -29,7 +34,8 @@ const deleteChannel = async (req, res) => {
 };
 
 const getChannel = async (req, res) => {
-  const { channelId } = req.body;
+  const channelId = req.params['channelId'];
+  console.log('backend ccccc:', channelId);
   const result = await Channel.getChannel(channelId);
 
   console.log(result);
@@ -37,14 +43,19 @@ const getChannel = async (req, res) => {
 };
 
 const inviteFriendToChannel = async (req, res) => {
-  const { serverId, channelId, friendId } = req.body;
+  // const { userId } = req.user;
+  const { serverId, channelId, friendName } = req.body;
   const result = await Channel.inviteFriendToChannel(
     serverId,
     channelId,
-    friendId
+    friendName
   );
 
-  console.log(result);
+  if (result.error) {
+    res.status(500).send(result.error);
+    return;
+  }
+
   res.send(result);
 };
 

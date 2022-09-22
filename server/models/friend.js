@@ -72,7 +72,7 @@ const rejectInvitation = async (receiverId, senderId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const updateReceiverPending = await User.findByIdAndUpdate(
+    const updateReceiverIncoming = await User.findByIdAndUpdate(
       receiverId,
       {
         $pull: { incomingFriendReq: senderId },
@@ -80,7 +80,7 @@ const rejectInvitation = async (receiverId, senderId) => {
       { new: true }
     ).exec();
 
-    const updateSenderInvite = await User.findByIdAndUpdate(
+    const updateSenderOutgoing = await User.findByIdAndUpdate(
       senderId,
       {
         $pull: { outgoingFriendReq: receiverId },
@@ -89,8 +89,6 @@ const rejectInvitation = async (receiverId, senderId) => {
     ).exec();
 
     await session.commitTransaction();
-    console.log('updateReceiverPending', updateReceiverPending);
-    console.log('updateSenderInvite', updateSenderInvite);
     return 'Reject friend success';
   } catch (error) {
     await session.abortTransaction();

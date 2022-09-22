@@ -24,10 +24,18 @@ const acceptInvitation = async (req, res) => {
 };
 
 const rejectInvitation = async (req, res) => {
-  const { receiverId, senderId } = req.body;
+  const receiverId = req.user.userId;
+  const { senderId } = req.body;
   const result = await Friend.rejectInvitation(receiverId, senderId);
 
-  res.send(result);
+  if (result.error) {
+    res.status(403).send(result.error);
+    return;
+  }
+
+  console.log('result', result);
+
+  res.status(200).send(result);
 };
 
 const cancelInvitation = async (req, res) => {

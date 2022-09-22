@@ -33,12 +33,13 @@ const signIn = async (req, res) => {
     return;
   }
 
-  const result = await User.signIn(email);
+  const { user, userOwnChannels } = await User.signIn(email);
+  console.log(userOwnChannels.toString());
 
-  if (result !== null) {
-    if (await argon2.verify(result.password, password)) {
+  if (user !== null) {
+    if (await argon2.verify(user.password, password)) {
       const jwtToken = await jwtSign(
-        { userId: result._id, userName: result.name },
+        { userId: user._id, userName: user.name, userChannel: userOwnChannels },
         SECRET,
         EXPIRED
       );

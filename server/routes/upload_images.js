@@ -4,7 +4,7 @@ const { upload } = require('../../utils/util');
 const { uploadImages } = require('../controllers/upload_images');
 
 router
-  .route('/channels/uploadfiles')
-  .post(upload.single('images'), uploadImages);
+  .route('/uploadfiles')
+  .post(upload.fields([{ name: 'files', maxCount: 5 }]), uploadImages);
 
 module.exports = router;

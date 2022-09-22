@@ -1,49 +1,30 @@
 const conn = require('../../utils/mongodb');
 // const { User, Server } = require('../models/schema');
 const { User, Server } = require('../models/test');
+const mongoose = require('mongoose');
+
+const ObjectId = mongoose.Types.ObjectId;
 
 // 之後要加權限 role
 const createChannel = async (serverId, channelTitle, isPublic, userId) => {
   try {
-    const channel = await Server.findByIdAndUpdate(
+    const { channel } = await Server.findByIdAndUpdate(
       serverId,
       {
         $push: {
-          'category.0.channel': {
+          channel: {
             title: channelTitle,
             isPublic: isPublic,
-            members: { userName: userId, permission: 'owner' },
+            members: { userId: userId, permission: 'owner' },
           },
         },
       },
-      // {
-      //   $push: {
-      //     category: {
-      //       channel: {
-      //         title: channelTitle,
-      //         isPublic: isPublic,
-      //         members: { userName: userId, permission: 'owner' },
-      //       },
-      //     },
-      //   },
-      // },
       {
-        fields: {
-          'category.channel.title': 1,
-          'category.channel.isPublic': 1,
-          'category.channel.members': 1,
-          'category.channel._id': 1,
-        },
         new: true,
       }
     );
-    // console.log(channel.category.length);
-    console.log(channel);
-    console.log(channel.category);
-    // console.log(channel.category[0].channel[0].members);
-    // console.log(channel.category[0].channel[3].members);
 
-    return channel.category[0].channel;
+    return channel;
   } catch (error) {
     console.log(error);
     return { error: 'Create channel fail' };
@@ -68,9 +49,11 @@ const deleteChannel = async (serverId, channelId) => {
 
 const getChannel = async (channelId) => {
   try {
-    const channel = await Server.findOne({
-      'category.channel._id': channelId,
+    const channel = await Server.find({
+      'channel._id': channelId,
     });
+
+    console.log('model channel:', channel);
 
     // console.log(channel.category[0].channel);
     return 'ok';
@@ -79,28 +62,72 @@ const getChannel = async (channelId) => {
   }
 };
 
-const inviteFriendToChannel = async (serverId, channelId, friendId) => {
-  console.log(friendId);
+const inviteFriendToChannel = async (serverId, channelId, friendName) => {
+  console.log([serverId, channelId, friendName]);
+  const session = await conn.startSession();
   try {
-    const channel = await Server.findOneAndUpdate(
-      { 'category.channel._id': '6321db2b42dcf64401411111' },
+    session.startTransaction();
+
+    const user = await User.findOne({ name: friendName }).select({ name: 1 });
+
+    await Server.findOneAndUpdate(
+      { serverId },
       {
-        $addToSet: { $each: { members: friendId } },
+        $addToSet: { members: user._id },
+        $addToSet: { 'roles.3.usersId': user._id },
+      },
+      { new: true }
+    );
+
+    await Server.findOneAndUpdate(
+      { 'channel._id': channelId },
+      {
         $addToSet: {
-          'category.0.channel.$.members': {
-            userName: friendId,
-            permission: 'admin',
+          'channel.$.members': {
+            userId: user._id,
+            permission: 'reader',
+          },
+        },
+      },
+      { new: true }
+    ).exec();
+
+    const selectChannel = await Server.aggregate([
+      { $match: { 'channel._id': ObjectId(channelId) } },
+    ]);
+
+    let channelMembersInfo;
+
+    // console.log('selectChannel', selectChannel);
+
+    channelMembersInfo = selectChannel[0].channel.filter(
+      (item) => item._id.toString() === channelId
+    );
+
+    channelMembersInfo = channelMembersInfo[0].members.pop();
+    // console.log(channelMembersInfo);
+
+    const test = await User.findByIdAndUpdate(
+      user._id,
+      {
+        $addToSet: {
+          servers: {
+            userPermission: channelMembersInfo.userId,
+            serverId: serverId,
           },
         },
       },
       { new: true }
     );
 
-    console.log(channel);
-    // console.log(channel.category[0].channel[0]);
-    return 'OK';
+    await session.commitTransaction();
+    return 'Invite friend to channel success';
   } catch (error) {
+    await session.abortTransaction();
     console.log(error);
+    return { error };
+  } finally {
+    session.endSession();
   }
 };
 

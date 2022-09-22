@@ -20,7 +20,19 @@ const signUp = async (name, email, password) => {
 const signIn = async (email) => {
   try {
     const user = await User.findOne({ email }).exec();
-    return user;
+
+    const { servers } = await User.findById(user._id).populate({
+      path: 'servers.serverId',
+    });
+
+    let userOwnChannels;
+    userOwnChannels = servers.map((item) =>
+      item.serverId.channel.map((item) => item._id)
+    );
+
+    userOwnChannels = userOwnChannels.flat();
+
+    return { user, userOwnChannels };
   } catch (error) {
     console.log('error:', error.message);
     return { error: error.message };
