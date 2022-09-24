@@ -2,7 +2,6 @@ const conn = require('../../utils/mongodb');
 // const { User, Server } = require('../models/schema');
 const { User, Server } = require('../models/test');
 const mongoose = require('mongoose');
-
 const ObjectId = mongoose.Types.ObjectId;
 
 // 之後要加權限 role
@@ -107,7 +106,7 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
     channelMembersInfo = channelMembersInfo[0].members.pop();
     // console.log(channelMembersInfo);
 
-    const test = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       user._id,
       {
         $addToSet: {

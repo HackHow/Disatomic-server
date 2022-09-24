@@ -2,13 +2,13 @@ require('dotenv').config();
 const { DNS } = process.env;
 
 const uploadImages = async (req, res) => {
-  //   console.log('controller req.file', req.file);
-  //   console.log('controllers req.body', req.body);
-  const filePath = req.file.path;
-  const fileName = filePath.split('\\').slice(-3);
-  const fileUrl = DNS + '/' + fileName.join('/');
+  const { files } = req.files;
+  const filesPath = files[0].path;
 
-  return res.status(200).send({ pictureUrl: fileUrl });
+  const filesName = filesPath.split('\\').slice(-3);
+  const filesUrl = DNS + '/' + filesName.join('/');
+
+  return res.status(200).send({ pictureURL: filesUrl });
 };
 
 module.exports = { uploadImages };

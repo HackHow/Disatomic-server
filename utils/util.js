@@ -11,8 +11,6 @@ const { USER_ROLE } = require('../server/models/server');
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      // console.log('multer req.body', req.body);
-      // const pictureName = req.body.images;
       const filesPath = path.join(
         process.cwd(),
         `/public/assets/`,
@@ -24,7 +22,7 @@ const upload = multer({
       cb(null, filesPath);
     },
     filename: (req, file, cb) => {
-      // const fileExtension = file.mimetype.split('/')[1];
+      // const fileExtension = file.mimetype.split('/')[1]; // png
       cb(null, Date.now() + '-' + file.originalname);
     },
   }),

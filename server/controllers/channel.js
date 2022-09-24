@@ -35,7 +35,6 @@ const deleteChannel = async (req, res) => {
 
 const getChannel = async (req, res) => {
   const channelId = req.params['channelId'];
-  console.log('backend ccccc:', channelId);
   const result = await Channel.getChannel(channelId);
 
   console.log(result);

@@ -34,7 +34,6 @@ const signIn = async (req, res) => {
   }
 
   const { user, userOwnChannels } = await User.signIn(email);
-  console.log(userOwnChannels.toString());
 
   if (user !== null) {
     if (await argon2.verify(user.password, password)) {

@@ -9,6 +9,7 @@ const { API_VERSION, PORT } = process.env;
 const Friend = require('./server/models/friend');
 const { jwtVerify } = require('./utils/util');
 const { SECRET } = process.env;
+const Chat = require('./server/models/chat_record');
 
 app.use(cors());
 app.use(express.static('public'));
@@ -26,6 +27,7 @@ app.use('/api/' + API_VERSION, [
   require('./server/routes/friend'),
   require('./server/routes/server'),
   require('./server/routes/channel'),
+  require('./server/routes/chat_record'),
 ]);
 
 // socket.io
@@ -81,7 +83,6 @@ io.use(async (socket, next) => {
     socket.userName = userName;
     socket.friends = friends;
     socket.userChannel = userChannel;
-    console.log('userChannel', userChannel[0]);
   } catch (error) {
     console.log(error);
     next(error);
@@ -97,25 +98,40 @@ io.on('connection', (socket) => {
   }
 
   saveOnlineUser(socket.userId, socket.id);
-  const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
 
+  const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
   socket.on('getOnlineFriend', () => {
     if (friendOnlineList.length > 0) {
       socket.emit('OnlineFriend', friendOnlineList);
     }
   });
 
-  socket.on('join', (channelRoom) => {
-    console.log('channelRoom:', channelRoom);
-    socket.join(channelRoom);
-  });
+  socket.join(socket.userChannel);
 
-  // socket.to(channelRoom)
+  socket.on('channelSendMessage', async (msg) => {
+    msg.userId = socket.userId;
+    msg.userName = socket.userName.split('#')[0];
+    if (msg.text) {
+      const {
+        userId,
+        userName,
+        text,
+        channelId,
+        links: { linkURL },
+        files: { fileURL },
+      } = msg;
 
-  socket.on('channelSendMessage', (msg) => {
-    if (msg.content) {
-      console.log('channelSendMessage', msg);
-      io.to(msg.channelId).emit('channelReceiveMessage', msg.content);
+      const chatRecord = await Chat.saveMultiChatRecord(
+        userId,
+        text,
+        linkURL,
+        fileURL,
+        channelId
+      );
+      msg.dateTime = chatRecord.saveChatRecordTime;
+      console.log(msg);
+
+      io.to(msg.channelId).emit('channelReceiveMessage', msg);
     }
   });
 

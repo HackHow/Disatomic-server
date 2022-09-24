@@ -25,8 +25,6 @@ const deleteServer = async (req, res) => {
 
 const getServerInfo = async (req, res) => {
   // const { userId } = req.user;
-  console.log('req.io', req.io);
-  console.log('req.socket', req.socket);
   const serverId = req.params['serverId'];
   const result = await Server.getServerInfo(serverId);
 
