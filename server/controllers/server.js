@@ -30,6 +30,11 @@ const getServerInfo = async (req, res) => {
   const serverId = req.params['serverId'];
   const result = await Server.getServerInfo(serverId);
 
+  if (result === null) {
+    res.status(200).send('Have not any server');
+    return;
+  }
+
   if (result.error) {
     res.status(500).send('Database Query Error');
     return;

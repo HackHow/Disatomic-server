@@ -21,7 +21,7 @@ const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
       },
     });
 
-    const dateTime = dayjs(chat.createdAt).format('MM-DD-YYYY HH:mm');
+    const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
 
     await Server.findOneAndUpdate(
       {

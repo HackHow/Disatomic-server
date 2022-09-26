@@ -114,10 +114,9 @@ io.on('connection', (socket) => {
   socket.join(socket.userChannel);
 
   socket.on('channelSendMessage', async (msg) => {
-    console.log('MSG:', msg);
     msg.userId = socket.userId;
     msg.userName = socket.userName.split('#')[0];
-    if (msg.text) {
+    if (msg.text || msg.files.fileURL) {
       const {
         userId,
         userName,
@@ -129,6 +128,7 @@ io.on('connection', (socket) => {
 
       const chatRecord = await Chat.saveMultiChatRecord(
         userId,
+        userName,
         text,
         linkURL,
         fileURL,
