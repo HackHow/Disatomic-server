@@ -31,12 +31,16 @@ app.use('/api/' + API_VERSION, [
 ]);
 
 // socket.io
+// const io = new Server(server, {
+//   cors: {
+//     origin: 'http://localhost:3000', 'https://dis4tomic.com/',
+//     methods: ['GET', 'POST'],
+//     credentials: true,
+//   },
+// });
+
 const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
+  cors: '*',
 });
 
 const allOnlineUser = {};
@@ -110,6 +114,7 @@ io.on('connection', (socket) => {
   socket.join(socket.userChannel);
 
   socket.on('channelSendMessage', async (msg) => {
+    console.log('MSG:', msg);
     msg.userId = socket.userId;
     msg.userName = socket.userName.split('#')[0];
     if (msg.text) {
