@@ -96,6 +96,7 @@ io.on('connection', (socket) => {
   if (!socket.userId) {
     return io.to(socket.id).emit('token', 'No token');
   }
+  socket.emit('userName', socket.userName);
 
   saveOnlineUser(socket.userId, socket.id);
 

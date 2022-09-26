@@ -101,6 +101,7 @@ const deleteServer = async (userId, serverId) => {
 const getServerInfo = async (serverId) => {
   try {
     const server = await Server.findById(serverId);
+    // console.log(server);
     return server;
   } catch (error) {
     console.log('ERROR:', error);

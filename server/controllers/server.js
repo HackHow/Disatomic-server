@@ -11,6 +11,8 @@ const createServer = async (req, res) => {
     return;
   }
 
+  console.log('Create Server Success !');
+
   res.status(200).send(result);
   return;
 };

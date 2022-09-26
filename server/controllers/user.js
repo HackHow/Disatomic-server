@@ -63,15 +63,16 @@ const userInfo = async (req, res) => {
     return;
   }
 
-  const userOwnServers = servers.map((item) => {
+  const userOwnServer = servers.map((item) => {
     return {
       serverId: item.serverId._id,
       serverName: item.serverId.serverName,
     };
   });
+
   // const userOwnFriends = friends.map((item) => item.name);
 
-  res.status(200).send({ userId, userOwnServers });
+  res.status(200).send({ userId, userOwnServer });
   return;
 };
 
