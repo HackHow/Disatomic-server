@@ -34,16 +34,13 @@ const multiChatSchema = new Schema({
     ref: 'User',
   },
   text: String, // Can be null
-  links: [
-    {
-      linkURL: String, // Can be null
-    },
-  ],
-  files: [
-    {
-      fileURL: String, // Can be null
-    },
-  ],
+  links: {
+    linkURL: String, // Can be null
+  },
+
+  files: {
+    fileURL: String, // Can be null
+  },
   createdAt: {
     type: Date,
     immutable: true,

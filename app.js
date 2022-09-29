@@ -95,14 +95,16 @@ io.use(async (socket, next) => {
 });
 
 io.on('connection', (socket) => {
+  saveOnlineUser(socket.userId, socket.id);
+
   console.log(`User Connected: ${socket.id}`);
   // console.log('socket.userId', socket.userId);
   if (!socket.userId) {
     return io.to(socket.id).emit('token', 'No token');
   }
-  socket.emit('userName', socket.userName);
 
-  saveOnlineUser(socket.userId, socket.id);
+  // send front-end UserInfo component
+  socket.emit('userName', socket.userName);
 
   const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
   socket.on('getOnlineFriend', () => {
@@ -115,11 +117,13 @@ io.on('connection', (socket) => {
 
   socket.on('channelSendMessage', async (msg) => {
     msg.userId = socket.userId;
-    msg.userName = socket.userName.split('#')[0];
-    if (msg.text || msg.files.fileURL) {
+    msg.senderId = {};
+    msg.senderId.name = socket.userName.split('#')[0];
+
+    if (msg.text || msg.files.fileURL || msg.links.linkURL) {
       const {
         userId,
-        userName,
+        senderId: { name },
         text,
         channelId,
         links: { linkURL },
@@ -128,13 +132,12 @@ io.on('connection', (socket) => {
 
       const chatRecord = await Chat.saveMultiChatRecord(
         userId,
-        userName,
         text,
         linkURL,
         fileURL,
         channelId
       );
-      msg.dateTime = chatRecord.saveChatRecordTime;
+      msg.createdAt = chatRecord.createdAt;
       console.log(msg);
 
       io.to(msg.channelId).emit('channelReceiveMessage', msg);

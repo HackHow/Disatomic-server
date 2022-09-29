@@ -5,11 +5,19 @@ const dayjs = require('dayjs');
 const { model } = require('mongoose');
 
 const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
-  // const session = await conn.startSession();
-  // console.log('links', links);
-  // console.log('files', files);
+  // const filesArray = files.map((item) => {
+  //   return { fileURL: item.fileURL };
+  // });
+
+  // const linksArray = files.map((item) => {
+  //   return { linkURL: item.linkURL };
+  // });
+
+  console.log([senderId, text, links, files, channelId]);
+
+  const session = await conn.startSession();
   try {
-    // session.startTransaction();
+    session.startTransaction();
     const chat = await MultiChat.create({
       senderId: senderId,
       text: text,
@@ -37,18 +45,18 @@ const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
       { new: true }
     );
 
-    // await session.commitTransaction();
-    return { saveChatRecordTime: dateTime };
+    await session.commitTransaction();
+    return { createdAt: dateTime };
   } catch (error) {
-    // await session.abortTransaction();
+    await session.abortTransaction();
     console.log(error);
     return error;
   } finally {
-    // session.endSession();
+    session.endSession();
   }
 };
 
-const getMultiChatRecord = async (serverId, channelId) => {
+const getMultiChatRecord = async (channelId) => {
   try {
     const chat = await Server.find(
       { 'channel._id': channelId },
@@ -62,12 +70,14 @@ const getMultiChatRecord = async (serverId, channelId) => {
       },
     });
 
+    // const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
+
     const chatRecord = chat[0].channel[0].chatRecord;
     // console.log(chatRecord);
     // const test = chatRecord.map((item) => item.senderId.name);
     // console.log(test);
 
-    return 'ok';
+    return chatRecord;
   } catch (error) {
     console.log(error);
     return { error };
