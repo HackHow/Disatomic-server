@@ -11,16 +11,14 @@ const personalChatSchema = new Schema({
     ref: 'User',
   },
   text: String, // Can be null
-  links: [
-    {
-      url: String, // Can be null
-    },
-  ],
-  files: [
-    {
-      url: String, // Can be null
-    },
-  ],
+  links: {
+    url: String, // Can be null
+  },
+
+  files: {
+    url: String, // Can be null
+  },
+
   createdAt: {
     type: Date,
     immutable: true,

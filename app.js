@@ -147,6 +147,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
     deleteOfflineUser(socket.userId);
+    socket.emit('frinedOffline');
     console.log('================');
   });
 });
