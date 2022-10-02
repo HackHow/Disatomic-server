@@ -76,6 +76,7 @@ const getAllFriends = async (req, res) => {
     res.status(500).send({ error: 'Database Query Error' });
     return;
   }
+
   res.status(200).send(result);
 };
 

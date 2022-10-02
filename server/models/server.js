@@ -98,7 +98,7 @@ const deleteServer = async (userId, serverId) => {
   }
 };
 
-const getServerInfo = async (serverId) => {
+const getChannelOfServer = async (serverId) => {
   try {
     const server = await Server.findById(serverId);
     // console.log(server);
@@ -111,7 +111,7 @@ const getServerInfo = async (serverId) => {
 
 module.exports = {
   USER_ROLE,
-  getServerInfo,
+  getChannelOfServer,
   createServer,
   deleteServer,
 };

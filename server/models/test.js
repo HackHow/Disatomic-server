@@ -12,11 +12,11 @@ const personalChatSchema = new Schema({
   },
   text: String, // Can be null
   links: {
-    url: String, // Can be null
+    linkURL: String, // Can be null
   },
 
   files: {
-    url: String, // Can be null
+    fileURL: String, // Can be null
   },
 
   createdAt: {
@@ -27,7 +27,7 @@ const personalChatSchema = new Schema({
 });
 
 const multiChatSchema = new Schema({
-  senderId: {
+  sender: {
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
@@ -35,7 +35,6 @@ const multiChatSchema = new Schema({
   links: {
     linkURL: String, // Can be null
   },
-
   files: {
     fileURL: String, // Can be null
   },

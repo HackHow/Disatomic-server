@@ -70,7 +70,7 @@ const userInfo = async (req, res) => {
     };
   });
 
-  // const userOwnFriends = friends.map((item) => item.name);
+  console.log(userOwnServer);
 
   res.status(200).send({ userId, userOwnServer });
   return;

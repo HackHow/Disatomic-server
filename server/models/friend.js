@@ -160,7 +160,7 @@ const getAllFriends = async (userId) => {
       },
     });
 
-    // console.log('user', user);
+    // console.log('user', user.friends);
     return user.friends;
   } catch (error) {
     console.log(error);

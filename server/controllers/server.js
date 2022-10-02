@@ -25,10 +25,10 @@ const deleteServer = async (req, res) => {
   res.status(200).send('Delete server success');
 };
 
-const getServerInfo = async (req, res) => {
+const getChannelOfServer = async (req, res) => {
   // const { userId } = req.user;
   const serverId = req.params['serverId'];
-  const result = await Server.getServerInfo(serverId);
+  const result = await Server.getChannelOfServer(serverId);
 
   if (result === null) {
     res.status(200).send('Have not any server');
@@ -51,4 +51,4 @@ const getServerInfo = async (req, res) => {
   res.send({ serverName: result.serverName, channelList: channelList });
   return;
 };
-module.exports = { getServerInfo, createServer, deleteServer };
+module.exports = { getChannelOfServer, createServer, deleteServer };

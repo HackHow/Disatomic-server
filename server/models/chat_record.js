@@ -1,6 +1,6 @@
 const conn = require('../../utils/mongodb');
 // const { User } = require('../models/schema');
-const { User, MultiChat, Server } = require('../models/test');
+const { User, MultiChat, Server, PersonalChat } = require('../models/test');
 const dayjs = require('dayjs');
 const { model } = require('mongoose');
 
@@ -12,14 +12,11 @@ const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
   // const linksArray = files.map((item) => {
   //   return { linkURL: item.linkURL };
   // });
-
-  console.log([senderId, text, links, files, channelId]);
-
   const session = await conn.startSession();
   try {
     session.startTransaction();
     const chat = await MultiChat.create({
-      senderId: senderId,
+      sender: senderId,
       text: text,
       links: {
         linkURL: links,
@@ -65,12 +62,10 @@ const getMultiChatRecord = async (channelId) => {
       path: 'channel.chatRecord',
       select: { '_id': 0 },
       populate: {
-        path: 'senderId',
+        path: 'sender',
         select: { 'name': 1, '_id': 0 },
       },
     });
-
-    // const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
 
     const chatRecord = chat[0].channel[0].chatRecord;
     // console.log(chatRecord);
@@ -84,4 +79,57 @@ const getMultiChatRecord = async (channelId) => {
   }
 };
 
-module.exports = { saveMultiChatRecord, getMultiChatRecord };
+const savePersonalChatRecord = async (
+  senderId,
+  receiverId,
+  text,
+  links,
+  files
+) => {
+  try {
+    const chat = await PersonalChat.create({
+      sender: senderId,
+      receiver: receiverId,
+      text: text,
+      links: {
+        linkURL: links,
+      },
+      files: {
+        fileURL: files,
+      },
+    });
+    const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
+
+    return { createdAt: dateTime };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const getPersonalChatRecord = async (senderId, receiverId) => {
+  try {
+    const chat = await PersonalChat.find({
+      $or: [
+        { $and: [{ sender: senderId }, { receiver: receiverId }] },
+        { $and: [{ sender: receiverId }, { receiver: senderId }] },
+      ],
+    }).populate({
+      path: 'sender receiver',
+      select: { 'name': 1, 'id': 1 },
+    });
+
+    console.log(chat);
+    return chat;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+module.exports = {
+  saveMultiChatRecord,
+  getMultiChatRecord,
+  savePersonalChatRecord,
+  getPersonalChatRecord,
+};

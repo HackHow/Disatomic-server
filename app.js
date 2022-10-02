@@ -117,13 +117,13 @@ io.on('connection', (socket) => {
 
   socket.on('channelSendMessage', async (msg) => {
     msg.userId = socket.userId;
-    msg.senderId = {};
-    msg.senderId.name = socket.userName.split('#')[0];
+    msg.sender = {};
+    msg.sender.name = socket.userName.split('#')[0];
 
     if (msg.text || msg.files.fileURL || msg.links.linkURL) {
       const {
         userId,
-        senderId: { name },
+        // senderId: { name },
         text,
         channelId,
         links: { linkURL },
@@ -144,10 +144,55 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('privateSendMessage', async (msg) => {
+    // msg.userId = socket.userId;
+    msg.sender = {};
+    msg.sender.id = socket.userId;
+    // msg.receiver = {};
+    msg.sender.name = socket.userName.split('#')[0];
+    // msg.receiver.name = msg.friendName.split('#')[0];
+
+    let friendSocketId;
+    if (allOnlineUser[msg.receiver.id] !== undefined) {
+      friendSocketId = allOnlineUser[msg.receiver.id]; //string
+    } else {
+      friendSocketId = '';
+    }
+
+    if (msg.text || msg.files.fileURL || msg.links.linkURL) {
+      const {
+        sender,
+        receiver,
+        text,
+        links: { linkURL },
+        files: { fileURL },
+      } = msg;
+
+      const chatRecord = await Chat.savePersonalChatRecord(
+        sender.id,
+        receiver.id,
+        text,
+        linkURL,
+        fileURL
+      );
+
+      msg.createdAt = chatRecord.createdAt;
+      // msg.target;
+      console.log('Private msg:', msg);
+      console.log('friendSocketId', friendSocketId);
+
+      // socket.join(friendSocketId);
+
+      io.to(friendSocketId).emit('privateReceiveMessage', msg);
+
+      msg.receiver.id = socket.userId;
+      io.to(socket.id).emit('privateReceiveMessage', msg);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
     deleteOfflineUser(socket.userId);
-    socket.emit('frinedOffline');
     console.log('================');
   });
 });
