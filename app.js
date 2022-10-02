@@ -59,12 +59,13 @@ function deleteOfflineUser(userId) {
   // console.log('After Delete Offline User:', allOnlineUser);
 }
 
-function getOnlineFriend(allOnlineUser, friendInfo) {
+function getOnlineFriend(allOnlineUser, friendList) {
   const friendInOnline = [];
-  if (friendInfo.length > 0) {
-    friendInfo.map((item) => {
+  if (friendList.length > 0) {
+    friendList.map((item) => {
       if (allOnlineUser[item.id]) {
         friendInOnline.push({
+          socketId: allOnlineUser[item.id],
           friendId: item.id,
           friendName: item.name,
           state: 'online',
@@ -73,6 +74,18 @@ function getOnlineFriend(allOnlineUser, friendInfo) {
     });
   }
   return friendInOnline;
+}
+
+function notifyOnline(allOnlineUser, friendList) {
+  const friendOnlineSocketIdArray = [];
+  if (friendList.length > 0) {
+    friendList.map((item) => {
+      if (allOnlineUser[item.id]) {
+        friendOnlineSocketIdArray.push(allOnlineUser[item.id]);
+      }
+    });
+  }
+  return friendOnlineSocketIdArray;
 }
 
 io.use(async (socket, next) => {
@@ -107,9 +120,22 @@ io.on('connection', (socket) => {
   socket.emit('userName', socket.userName);
 
   const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
+
+  if (friendOnlineList.length > 0) {
+    const friendOnlineSocketId = friendOnlineList.map((item) => item.socketId);
+
+    const currentUserInfo = {
+      friendId: socket.userId,
+      friendName: socket.userName,
+      state: 'online',
+    };
+
+    io.to(friendOnlineSocketId).emit('onlineNotify', currentUserInfo);
+  }
+
   socket.on('getOnlineFriend', () => {
     if (friendOnlineList.length > 0) {
-      socket.emit('OnlineFriend', friendOnlineList);
+      socket.emit('onlineFriend', friendOnlineList);
     }
   });
 
@@ -145,12 +171,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('privateSendMessage', async (msg) => {
-    // msg.userId = socket.userId;
     msg.sender = {};
     msg.sender.id = socket.userId;
-    // msg.receiver = {};
     msg.sender.name = socket.userName.split('#')[0];
-    // msg.receiver.name = msg.friendName.split('#')[0];
 
     let friendSocketId;
     if (allOnlineUser[msg.receiver.id] !== undefined) {
@@ -177,9 +200,8 @@ io.on('connection', (socket) => {
       );
 
       msg.createdAt = chatRecord.createdAt;
-      // msg.target;
-      console.log('Private msg:', msg);
-      console.log('friendSocketId', friendSocketId);
+      // console.log('Private msg:', msg);
+      // console.log('friendSocketId', friendSocketId);
 
       // socket.join(friendSocketId);
 
@@ -193,6 +215,22 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
     deleteOfflineUser(socket.userId);
+
+    if (friendOnlineList.length > 0) {
+      const friendOnlineSocketId = friendOnlineList.map(
+        (item) => item.socketId
+      );
+
+      console.log('friendOnlineSocketId', friendOnlineSocketId);
+      const currentUserInfo = {
+        friendId: socket.userId,
+        friendName: socket.userName,
+        state: 'offline',
+      };
+      io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
+    }
+    // io.emit('userOffline', currentUserInfo);
+
     console.log('================');
   });
 });

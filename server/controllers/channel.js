@@ -37,7 +37,7 @@ const getChannel = async (req, res) => {
   const channelId = req.params['channelId'];
   const result = await Channel.getChannel(channelId);
 
-  console.log(result);
+  // console.log(result);
   res.send(result);
 };
 

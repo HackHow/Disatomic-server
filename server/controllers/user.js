@@ -70,7 +70,7 @@ const userInfo = async (req, res) => {
     };
   });
 
-  console.log(userOwnServer);
+  // console.log(userOwnServer);
 
   res.status(200).send({ userId, userOwnServer });
   return;
