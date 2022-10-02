@@ -228,7 +228,7 @@ io.on('connection', (socket) => {
         state: 'offline',
       };
       // io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
-      io.emit('userOffline', currentUserInfo);
+      io.emit('OfflineNotify', currentUserInfo);
     }
 
     console.log('================');
