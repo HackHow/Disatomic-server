@@ -21,6 +21,7 @@ const acceptInvitation = async (req, res) => {
   const result = await Friend.acceptInvitation(receiverId, senderId);
 
   res.status(200).send(result);
+  return;
 };
 
 const rejectInvitation = async (req, res) => {
@@ -33,7 +34,7 @@ const rejectInvitation = async (req, res) => {
     return;
   }
 
-  console.log('result', result);
+  // console.log('result', result);
 
   res.status(200).send(result);
 };

@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
         channelId
       );
       msg.createdAt = chatRecord.createdAt;
-      // console.log(msg);
+      console.log('MultiChat', msg);
 
       io.to(msg.channelId).emit('channelReceiveMessage', msg);
     }

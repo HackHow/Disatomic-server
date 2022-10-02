@@ -39,7 +39,7 @@ const acceptInvitation = async (receiverId, senderId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    await User.findByIdAndUpdate(
+    const receiver = await User.findByIdAndUpdate(
       receiverId,
       {
         $pull: { incomingFriendReq: senderId },
@@ -48,7 +48,7 @@ const acceptInvitation = async (receiverId, senderId) => {
       { new: true }
     ).exec();
 
-    await User.findByIdAndUpdate(
+    const sender = await User.findByIdAndUpdate(
       senderId,
       {
         $pull: { outgoingFriendReq: receiverId },
@@ -58,7 +58,9 @@ const acceptInvitation = async (receiverId, senderId) => {
     ).exec();
 
     await session.commitTransaction();
-    return 'Accept friend success';
+    return {
+      incomingFriendReq: receiver.incomingFriendReq,
+    };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
@@ -89,7 +91,7 @@ const rejectInvitation = async (receiverId, senderId) => {
     ).exec();
 
     await session.commitTransaction();
-    return 'Reject friend success';
+    return { incomingFriendReq: updateReceiverIncoming.incomingFriendReq };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
@@ -103,7 +105,7 @@ const cancelInvitation = async (senderId, receiverId) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    await User.findByIdAndUpdate(
+    const sender = await User.findByIdAndUpdate(
       senderId,
       {
         $pull: { outgoingFriendReq: receiverId },
@@ -111,7 +113,7 @@ const cancelInvitation = async (senderId, receiverId) => {
       { new: true }
     ).exec();
 
-    await User.findByIdAndUpdate(
+    const receiver = await User.findByIdAndUpdate(
       receiverId,
       {
         $pull: { incomingFriendReq: senderId },
@@ -120,7 +122,7 @@ const cancelInvitation = async (senderId, receiverId) => {
     ).exec();
 
     await session.commitTransaction();
-    return 'Cancel friend success';
+    return { outgoingFriendReq: sender.outgoingFriendReq };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
