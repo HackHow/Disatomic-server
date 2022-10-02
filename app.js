@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
         channelId
       );
       msg.createdAt = chatRecord.createdAt;
-      console.log(msg);
+      // console.log(msg);
 
       io.to(msg.channelId).emit('channelReceiveMessage', msg);
     }
@@ -221,15 +221,15 @@ io.on('connection', (socket) => {
         (item) => item.socketId
       );
 
-      console.log('friendOnlineSocketId', friendOnlineSocketId);
+      // console.log('friendOnlineSocketId', friendOnlineSocketId);
       const currentUserInfo = {
         friendId: socket.userId,
         friendName: socket.userName,
         state: 'offline',
       };
-      io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
+      // io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
+      io.emit('userOffline', currentUserInfo);
     }
-    // io.emit('userOffline', currentUserInfo);
 
     console.log('================');
   });
