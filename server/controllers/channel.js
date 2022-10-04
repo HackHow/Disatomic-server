@@ -23,6 +23,7 @@ const createChannel = async (req, res) => {
   });
 
   res.status(200).send(channelInfo);
+  return;
 };
 
 const deleteChannel = async (req, res) => {
@@ -31,6 +32,7 @@ const deleteChannel = async (req, res) => {
 
   console.log('result', result);
   res.send(result);
+  return;
 };
 
 const getChannel = async (req, res) => {
@@ -39,6 +41,7 @@ const getChannel = async (req, res) => {
 
   // console.log(result);
   res.send(result);
+  return;
 };
 
 const inviteFriendToChannel = async (req, res) => {
@@ -56,6 +59,7 @@ const inviteFriendToChannel = async (req, res) => {
   }
 
   res.send(result);
+  return;
 };
 
 module.exports = {

@@ -1,6 +1,5 @@
 const conn = require('../../utils/mongodb');
-// const { User } = require('../models/schema');
-const { User } = require('../models/test');
+const { User } = require('./schema');
 
 const sendInvitationToFriend = async (senderId, friendName) => {
   const session = await conn.startSession();

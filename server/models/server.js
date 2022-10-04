@@ -1,6 +1,5 @@
 const conn = require('../../utils/mongodb');
-// const { User, Server } = require('../models/schema');
-const { User, Server } = require('../models/test');
+const { User, Server } = require('./schema');
 
 const USER_ROLE = {
   0: 'owner',

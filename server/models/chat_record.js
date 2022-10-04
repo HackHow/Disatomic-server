@@ -1,8 +1,6 @@
 const conn = require('../../utils/mongodb');
-// const { User } = require('../models/schema');
-const { User, MultiChat, Server, PersonalChat } = require('../models/test');
+const { MultiChat, Server, PersonalChat } = require('./schema');
 const dayjs = require('dayjs');
-const { model } = require('mongoose');
 
 const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
   // const filesArray = files.map((item) => {

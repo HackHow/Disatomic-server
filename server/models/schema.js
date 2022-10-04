@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const { Schema, model } = mongoose;
 
 const personalChatSchema = new Schema({
@@ -7,21 +6,19 @@ const personalChatSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  sender: {
+  receiver: {
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  content: String,
-  links: [
-    {
-      url: String, // Can be null
-    },
-  ],
-  files: [
-    {
-      url: String, // Can be null
-    },
-  ],
+  text: String, // Can be null
+  links: {
+    linkURL: String, // Can be null
+  },
+
+  files: {
+    fileURL: String, // Can be null
+  },
+
   createdAt: {
     type: Date,
     immutable: true,
@@ -29,64 +26,24 @@ const personalChatSchema = new Schema({
   },
 });
 
-const chatSchema = new Schema([
-  {
-    sender: {
-      type: String,
-      required: true,
-    },
-    content: String,
-    links: [
-      {
-        url: String, // Can be null
-      },
-    ],
-    files: [
-      {
-        url: String, // Can be null
-      },
-    ],
-    createdAt: {
-      type: Date,
-      immutable: true,
-      default: () => Date.now(),
-    },
+const multiChatSchema = new Schema({
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
-]);
-
-// const linkSchema = new Schema([
-//   {
-//     sender: { type: String, required: true },
-//     content: String,
-//     links: [
-//       {
-//         url: { type: String, required: true },
-//       },
-//     ],
-//     createdAt: {
-//       type: Date,
-//       immutable: true,
-//       default: () => Date.now(),
-//     },
-//   },
-// ]);
-
-// const fileSchema = new Schema([
-//   {
-//     sender: { type: String, required: true },
-//     content: String, // default null
-//     images: [
-//       {
-//         url: { type: String, required: true },
-//       },
-//     ],
-//     createdAt: {
-//       type: Date,
-//       immutable: true,
-//       default: () => Date.now(),
-//     },
-//   },
-// ]);
+  text: String, // Can be null
+  links: {
+    linkURL: String, // Can be null
+  },
+  files: {
+    fileURL: String, // Can be null
+  },
+  createdAt: {
+    type: Date,
+    immutable: true,
+    default: () => Date.now(),
+  },
+});
 
 const userSchema = new Schema({
   name: {
@@ -103,13 +60,13 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  inviteFriends: [
+  outgoingFriendReq: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
-  pendingFriends: [
+  incomingFriendReq: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -123,10 +80,8 @@ const userSchema = new Schema({
   ],
   servers: [
     {
-      // server: String, // 'AppWork School',
-      // userRoles: [String], // ['BackEnd', 'Teacher'],
       _id: false,
-      userRoles: {
+      userPermission: {
         type: Schema.Types.ObjectId,
         ref: 'Server',
       },
@@ -148,9 +103,8 @@ const userSchema = new Schema({
 });
 
 const serverSchema = new Schema({
-  serverName: String, // AppworkSchool
+  serverName: String,
   members: [
-    // ['Howard', '小賴', '谷哥', 'Claudia'] [object._id]
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -158,60 +112,51 @@ const serverSchema = new Schema({
   ],
   roles: [
     {
-      title: String, // 'BackEnd'
-      users: [
+      // title: String, // 'Back-End'
+      permission: String,
+      usersId: [
         {
-          // ['Howard', 'Adam', 'Kelvin'],
           type: Schema.Types.ObjectId,
           ref: 'User',
         },
       ],
     },
   ],
-  category: [
+  channel: [
     {
-      title: String, // BACK-END
-      channel: [
+      title: String, // 公佈欄
+      isPublic: Boolean, // false
+      // roles: [
+      //   {
+      //     roleName: String, // Back-end
+      //     permission: String, // read
+      //   },
+      // ],
+      members: [
         {
-          title: String, // 公佈欄
-          isPublic: Boolean, // false
-          roles: [
-            {
-              roleName: String, // Back-end
-              permission: String, // read
-            },
-          ],
-          members: [
-            {
-              _id: false,
-              userName: {
-                // Howard
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-              },
-              permission: String, // read (程式控制)
-            },
-          ],
-          chatRecord: chatSchema,
-          linksBlock: {
+          _id: false,
+          userId: {
             type: Schema.Types.ObjectId,
-            ref: 'Server',
+            ref: 'User',
           },
-          filesBlock: {
-            type: Schema.Types.ObjectId,
-            ref: 'Server',
-          },
-          createdAt: {
-            type: Date,
-            immutable: true,
-            default: () => Date.now(),
-          },
-          updatedAt: {
-            type: Date,
-            default: null,
-          },
+          permission: String, // read (程式控制)
         },
       ],
+      chatRecord: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'MultiChat',
+        },
+      ],
+      createdAt: {
+        type: Date,
+        immutable: true,
+        default: () => Date.now(),
+      },
+      updatedAt: {
+        type: Date,
+        default: null,
+      },
     },
   ],
   createdAt: {
@@ -227,5 +172,7 @@ const serverSchema = new Schema({
 
 const User = model('User', userSchema);
 const Server = model('Server', serverSchema);
+const PersonalChat = model('PersonalChat', personalChatSchema);
+const MultiChat = model('MultiChat', multiChatSchema);
 
-module.exports = { User, Server };
+module.exports = { User, Server, PersonalChat, MultiChat };

@@ -23,6 +23,7 @@ const deleteServer = async (req, res) => {
   const result = await Server.deleteServer(userId, serverId);
 
   res.status(200).send('Delete server success');
+  return;
 };
 
 const getChannelOfServer = async (req, res) => {

@@ -15,11 +15,6 @@ app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
 // API routes
 app.use('/api/' + API_VERSION, [
   require('./server/routes/upload_images'),
@@ -61,37 +56,23 @@ function deleteOfflineUser(userId) {
 
 function getOnlineFriend(allOnlineUser, friendList) {
   const friendInOnline = [];
-  if (friendList.length > 0) {
-    friendList.map((item) => {
-      if (allOnlineUser[item.id]) {
-        friendInOnline.push({
-          socketId: allOnlineUser[item.id],
-          friendId: item.id,
-          friendName: item.name,
-          state: 'online',
-        });
-      }
-    });
+  for (let i = 0; i < friendList.length; i++) {
+    if (allOnlineUser[friendList[i].id]) {
+      friendInOnline.push({
+        socketId: allOnlineUser[friendList[i].id],
+        friendId: friendList[i].id,
+        friendName: friendList[i].name,
+        state: 'online',
+      });
+    }
   }
   return friendInOnline;
-}
-
-function notifyOnline(allOnlineUser, friendList) {
-  const friendOnlineSocketIdArray = [];
-  if (friendList.length > 0) {
-    friendList.map((item) => {
-      if (allOnlineUser[item.id]) {
-        friendOnlineSocketIdArray.push(allOnlineUser[item.id]);
-      }
-    });
-  }
-  return friendOnlineSocketIdArray;
 }
 
 io.use(async (socket, next) => {
   let token = socket.handshake.auth.token;
   token = token.replace('Bearer ', '');
-  if (token === 'null') return next();
+  if (token === 'null') return next(new Error('No token!'));
 
   try {
     const { userId, userName, userChannel } = await jwtVerify(token, SECRET);
@@ -102,19 +83,18 @@ io.use(async (socket, next) => {
     socket.userChannel = userChannel;
   } catch (error) {
     console.log(error);
-    next(error);
+    next(new Error('Verify error!'));
   }
   next();
 });
 
 io.on('connection', (socket) => {
   saveOnlineUser(socket.userId, socket.id);
-
   console.log(`User Connected: ${socket.id}`);
-  // console.log('socket.userId', socket.userId);
-  if (!socket.userId) {
-    return io.to(socket.id).emit('token', 'No token');
-  }
+
+  // if (!socket.userId) {
+  //   return io.to(socket.id).emit('token', 'No token');
+  // }
 
   // send front-end UserInfo component
   socket.emit('userName', socket.userName);

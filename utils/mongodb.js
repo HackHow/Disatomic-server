@@ -21,38 +21,4 @@ mongoose
 
 const conn = mongoose.connection;
 
-// const conn = mongoose.connection;
-
-// const connectDB = async function () {
-//   try {
-//     await mongoose.connect(url, {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//       // bufferCommands: false,
-//       // bufferMaxEntries: 0
-//     });
-//     console.log('MongoDB connected!!');
-//   } catch (err) {
-//     console.log('Failed to connect to MongoDB', err);
-//   }
-// };
-
-// const TransactionsDB = async () => {
-//   try {
-//     await mongoose.connect(url, {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//       //   useFindAndModify: false,
-//       //   useCreateIndex: true,
-//     });
-//     const conn = mongoose.connection;
-//     console.log('MongoDB Transaction connected!!');
-//   } catch (err) {
-//     console.log('Failed to connect to MongoDB', err);
-//   }
-// };
-
-// const mongoDB = connectDB();
-// const conn = TransactionsDB();
-
 module.exports = conn;

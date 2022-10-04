@@ -1,6 +1,7 @@
 node_modules/
 public/assets/
 .env
+socket.js
 # test files
 schema.js
 public/index.html
