@@ -15,14 +15,11 @@ const createChannel = async (req, res) => {
     return;
   }
 
-  const channelInfo = result.map((item) => {
-    return {
-      channelId: item._id,
-      channelName: item.title,
-    };
+  res.status(200).send({
+    channelId: result[0]._id,
+    channelName: result[0].title,
+    isPublic: result[0].isPublic,
   });
-
-  res.status(200).send(channelInfo);
   return;
 };
 

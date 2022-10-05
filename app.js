@@ -25,15 +25,6 @@ app.use('/api/' + API_VERSION, [
   require('./server/routes/chat_record'),
 ]);
 
-// socket.io
-// const io = new Server(server, {
-//   cors: {
-//     origin: 'http://localhost:3000', 'https://dis4tomic.com/',
-//     methods: ['GET', 'POST'],
-//     credentials: true,
-//   },
-// });
-
 const io = new Server(server, {
   cors: '*',
 });
@@ -72,7 +63,9 @@ function getOnlineFriend(allOnlineUser, friendList) {
 io.use(async (socket, next) => {
   let token = socket.handshake.auth.token;
   token = token.replace('Bearer ', '');
-  if (token === 'null') return next(new Error('No token!'));
+  if (token === 'null') {
+    return next(new Error('Not authorized'));
+  }
 
   try {
     const { userId, userName, userChannel } = await jwtVerify(token, SECRET);
@@ -89,12 +82,8 @@ io.use(async (socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  saveOnlineUser(socket.userId, socket.id);
   console.log(`User Connected: ${socket.id}`);
-
-  // if (!socket.userId) {
-  //   return io.to(socket.id).emit('token', 'No token');
-  // }
+  saveOnlineUser(socket.userId, socket.id);
 
   // send front-end UserInfo component
   socket.emit('userName', socket.userName);
@@ -129,7 +118,6 @@ io.on('connection', (socket) => {
     if (msg.text || msg.files.fileURL || msg.links.linkURL) {
       const {
         userId,
-        // senderId: { name },
         text,
         channelId,
         links: { linkURL },
@@ -190,6 +178,26 @@ io.on('connection', (socket) => {
       msg.receiver.id = socket.userId;
       io.to(socket.id).emit('privateReceiveMessage', msg);
     }
+  });
+
+  socket.on('JoinCreatedChannel', (channelId) => {
+    console.log('channelId', channelId);
+    socket.join(channelId);
+  });
+
+  socket.on('NotifyAcceptFriend', ({ senderId, outgoingFriendReq }) => {
+    const senderSocketId = allOnlineUser[senderId] || '';
+    io.to(senderSocketId).emit('NotifySenderAccept', outgoingFriendReq);
+  });
+
+  socket.on('NotifyRejectFriend', ({ senderId, outgoingFriendReq }) => {
+    const senderSocketId = allOnlineUser[senderId] || '';
+    io.to(senderSocketId).emit('NotifySenderReject', outgoingFriendReq);
+  });
+
+  socket.on('NotifyCancelFriend', ({ receiverId, incomingFriendReq }) => {
+    const receiverSocketId = allOnlineUser[receiverId] || '';
+    io.to(receiverSocketId).emit('NotifyReceiverCancel', incomingFriendReq);
   });
 
   socket.on('disconnect', () => {

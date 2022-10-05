@@ -3,10 +3,9 @@ const { User, Server } = require('./schema');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-// 之後要加權限 role
 const createChannel = async (serverId, channelTitle, isPublic, userId) => {
   try {
-    const { channel } = await Server.findByIdAndUpdate(
+    await Server.findByIdAndUpdate(
       serverId,
       {
         $push: {
@@ -17,15 +16,18 @@ const createChannel = async (serverId, channelTitle, isPublic, userId) => {
           },
         },
       },
-      {
-        new: true,
-      }
+      { new: true }
+    );
+
+    const { channel } = await Server.findOne(
+      { 'channel.title': channelTitle },
+      { 'channel.$': 1 }
     );
 
     return channel;
   } catch (error) {
     console.log(error);
-    return { error: 'Create channel fail' };
+    return { error: 'Create Channel Fail' };
   }
 };
 
@@ -37,7 +39,7 @@ const deleteChannel = async (serverId, channelId) => {
       { new: true }
     );
 
-    console.log(channel);
+    // console.log(channel);
     return 'Delete channel success';
   } catch (error) {
     console.log(error);
@@ -61,7 +63,6 @@ const getChannel = async (channelId) => {
 };
 
 const inviteFriendToChannel = async (serverId, channelId, friendName) => {
-  console.log([serverId, channelId, friendName]);
   const session = await conn.startSession();
   try {
     session.startTransaction();

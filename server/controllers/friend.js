@@ -62,10 +62,10 @@ const getPendingFriends = async (req, res) => {
     return;
   }
 
-  const outgoingRequest = result.outgoingRequest;
-  const incomingRequest = result.incomingRequest;
-
-  res.status(200).send({ outgoingRequest, incomingRequest });
+  res.status(200).send({
+    outgoingFriendReq: result.outgoingFriendReq,
+    incomingFriendReq: result.incomingFriendReq,
+  });
   return;
 };
 

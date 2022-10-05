@@ -29,7 +29,7 @@ const signIn = async (req, res) => {
   const { email, password } = req.body;
 
   if (!validator.isEmail(email)) {
-    res.status(400).send('Invalid email format');
+    res.status(400).send('Invalid Email Format');
     return;
   }
 
