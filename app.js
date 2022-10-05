@@ -181,7 +181,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('JoinCreatedChannel', (channelId) => {
-    console.log('channelId', channelId);
+    // console.log('channelId', channelId);
     socket.join(channelId);
   });
 

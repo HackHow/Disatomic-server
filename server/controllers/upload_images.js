@@ -18,7 +18,7 @@ const uploadImages = async (req, res) => {
   // const filesName = filesPath.split('\\').slice(-3);
   // const filesUrl = DNS + '/' + filesName.join('/');
 
-  return res.status(200).send({ pictureURL: filesUrl });
+  return res.status(200).send({ pictureURL: filesURL });
 };
 
 module.exports = { uploadImages };
