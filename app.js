@@ -68,12 +68,12 @@ io.use(async (socket, next) => {
   }
 
   try {
-    const { userId, userName, userChannel } = await jwtVerify(token, SECRET);
+    const { userId, userName, userChannels } = await jwtVerify(token, SECRET);
     const friends = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
     socket.friends = friends;
-    socket.userChannel = userChannel;
+    socket.userChannels = userChannels;
   } catch (error) {
     console.log(error);
     next(new Error('Verify error!'));
@@ -108,7 +108,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.join(socket.userChannel);
+  socket.join(socket.userChannels);
 
   socket.on('channelSendMessage', async (msg) => {
     msg.userId = socket.userId;

@@ -8,6 +8,25 @@ const validator = require('validator');
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
+
+  if (!validator.isLength(name, { min: 3, max: 10 })) {
+    res.status(400).send('User name length must be 3 to 10 character');
+    return;
+  }
+
+  if (
+    !validator.isEmail(email) ||
+    validator.isEmpty(email, { ignore_whitespace: true })
+  ) {
+    res.status(400).send('Invalid Email Format');
+    return;
+  }
+
+  if (!validator.isLength(password, { min: 6, max: 16 })) {
+    res.status(400).send('Password length must be 6 to 16 character');
+    return;
+  }
+
   const newName = name + '#' + random.int(1000, 9999);
   const hashPassword = await argon2.hash(password);
   const result = await User.signUp(newName, email, hashPassword);
@@ -28,56 +47,76 @@ const signUp = async (req, res) => {
 const signIn = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!validator.isEmail(email)) {
+  if (
+    !validator.isEmail(email) ||
+    validator.isEmpty(email, { ignore_whitespace: true })
+  ) {
     res.status(400).send('Invalid Email Format');
     return;
   }
 
-  const { user, userOwnChannels } = await User.signIn(email);
+  if (!validator.isLength(password, { min: 6, max: 16 })) {
+    res.status(400).send('Password length must be 6 to 16 character');
+    return;
+  }
 
-  if (user !== null) {
-    if (await argon2.verify(user.password, password)) {
-      const jwtToken = await jwtSign(
-        { userId: user._id, userName: user.name, userChannel: userOwnChannels },
-        SECRET,
-        EXPIRED
-      );
-      res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
-      return;
-    } else {
-      res.status(401).send('Wrong Password');
-      return;
+  const result = await User.signIn(email);
+
+  if (result.error) {
+    res.status(401).send('Email Not Exists');
+    return;
+  }
+
+  const userChannels = [];
+  if (result.servers.length > 0) {
+    for (let i = 0; i < result.servers.length; i++) {
+      const { channel } = result.servers[i].serverId;
+      if (channel.length > 0) {
+        for (let j = 0; j < channel.length; j++) {
+          userChannels.push(channel[j]._id);
+        }
+      }
     }
+  }
+
+  if (await argon2.verify(result.password, password)) {
+    const jwtToken = await jwtSign(
+      {
+        userId: result._id,
+        userName: result.name,
+        userChannels: userChannels,
+      },
+      SECRET,
+      EXPIRED
+    );
+    res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
+    return;
   } else {
-    res.status(403).send('Email Not Exists');
+    res.status(401).send('Wrong Password');
     return;
   }
 };
 
-const userInfo = async (req, res) => {
+const getUserServer = async (req, res) => {
   const { userId } = req.user;
-  const { servers, friends } = await User.userInfo(userId);
+  const result = await User.getUserServer(userId);
 
-  if (servers === undefined || friends === undefined) {
-    res.status(403).send('User ID not found');
-    return;
+  const userServers = [];
+  if (result.length > 0) {
+    for (let i = 0; i < result.length; i++) {
+      userServers.push({
+        serverId: result[i].serverId._id,
+        serverName: result[i].serverId.serverName,
+      });
+    }
   }
 
-  const userOwnServer = servers.map((item) => {
-    return {
-      serverId: item.serverId._id,
-      serverName: item.serverId.serverName,
-    };
-  });
-
-  // console.log(userOwnServer);
-
-  res.status(200).send({ userId, userOwnServer });
+  res.status(200).send({ userServers });
   return;
 };
 
 module.exports = {
   signUp,
   signIn,
-  userInfo,
+  getUserServer,
 };

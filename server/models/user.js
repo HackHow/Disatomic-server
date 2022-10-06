@@ -18,51 +18,36 @@ const signUp = async (name, email, password) => {
 
 const signIn = async (email) => {
   try {
-    const user = await User.findOne({ email }).exec();
-
-    const { servers } = await User.findById(user._id).populate({
+    const { _id, name, password, servers } = await User.findOne(
+      { email },
+      '_id name password servers'
+    ).populate({
       path: 'servers.serverId',
+      select: { 'channel': 1 },
     });
 
-    let userOwnChannels;
-    userOwnChannels = servers.map((item) =>
-      item.serverId.channel.map((item) => item._id)
-    );
-
-    userOwnChannels = userOwnChannels.flat();
-
-    return { user, userOwnChannels };
+    return { _id, name, password, servers };
   } catch (error) {
     console.log('error:', error.message);
     return { error: error.message };
   }
 };
 
-const userInfo = async (userId) => {
+const getUserServer = async (userId) => {
   try {
-    const { servers } = await User.findById(userId)
-      .populate({
-        path: 'servers.serverId',
-        // select: { serverName: '$serverName' },
-      })
-      .exec();
-
-    const { friends } = await User.findById(userId).populate({
-      path: 'friends',
-      select: { _id: 0, name: '$name' },
+    const { servers } = await User.findById(userId).populate({
+      path: 'servers.serverId',
+      select: { '_id': 1, 'serverName': 1 },
     });
 
-    // console.log('servers', servers);
-    // console.log('friends', friends);
-
-    return { servers, friends };
+    return servers;
   } catch (error) {
-    return error;
+    return { error: error.message };
   }
 };
 
 module.exports = {
   signUp,
   signIn,
-  userInfo,
+  getUserServer,
 };
