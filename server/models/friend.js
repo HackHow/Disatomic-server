@@ -1,7 +1,24 @@
 const conn = require('../../utils/mongodb');
 const { User } = require('./schema');
 
-const sendInvitationToFriend = async (senderId, friendName) => {
+const checkHasFriend = async (senderId, friendName) => {
+  try {
+    const { friends } = await User.findOne({
+      '_id': senderId,
+    }).populate({
+      path: 'friends',
+      match: { 'name': friendName },
+      select: { 'name': 1 },
+    });
+
+    return friends;
+  } catch (error) {
+    console.log(error);
+    return { error: `You're already friends with that user!` };
+  }
+};
+
+const sendInvitation = async (senderId, friendName) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
@@ -24,11 +41,11 @@ const sendInvitationToFriend = async (senderId, friendName) => {
     ).exec();
 
     await session.commitTransaction();
-    return 'Invite Success';
+    return `Success! Your friend request to ${friendName} was sent`;
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    return { error: 'Can not find this user' };
+    return { error: `User not found` };
   } finally {
     session.endSession();
   }
@@ -66,7 +83,7 @@ const acceptInvitation = async (receiverId, senderId) => {
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    return 'Accept Friend Fail';
+    return { error: 'Accept Friend Fail' };
   } finally {
     session.endSession();
   }
@@ -102,7 +119,7 @@ const rejectInvitation = async (receiverId, senderId) => {
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    return 'Reject Friend Fail';
+    return { error: 'Reject Friend Fail' };
   } finally {
     session.endSession();
   }
@@ -138,7 +155,7 @@ const cancelInvitation = async (senderId, receiverId) => {
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    return 'Cancel Friend Fail';
+    return { error: 'Cancel Friend Fail' };
   } finally {
     session.endSession();
   }
@@ -158,29 +175,32 @@ const getPendingFriends = async (userId) => {
     return { outgoingFriendReq, incomingFriendReq };
   } catch (error) {
     console.log(error);
-    return { error };
+    return { error: 'Database Query Error' };
   }
 };
 
 const getAllFriends = async (userId) => {
   try {
-    const user = await User.findById(userId).populate({
+    const { friends } = await User.findById(userId, {
+      '_id': 0,
+      'friends': 1,
+    }).populate({
       path: 'friends',
       select: {
-        name: '$name',
+        'name': 1,
       },
     });
 
-    // console.log('user', user.friends);
-    return user.friends;
+    return friends;
   } catch (error) {
     console.log(error);
-    return { error };
+    return { error: 'Database Query Error' };
   }
 };
 
 module.exports = {
-  sendInvitationToFriend,
+  checkHasFriend,
+  sendInvitation,
   acceptInvitation,
   rejectInvitation,
   cancelInvitation,

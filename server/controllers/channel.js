@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Channel = require('../models/channel');
 
 const createChannel = async (req, res) => {

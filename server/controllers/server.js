@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Server = require('../models/server');
 
 const createServer = async (req, res) => {

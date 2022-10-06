@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Chat = require('../models/chat_record');
 
 const getMultiChatRecord = async (req, res) => {
