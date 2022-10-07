@@ -85,6 +85,7 @@ io.use(async (socket, next) => {
     const { friends } = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
+    console.log('userName', socket.userName);
     socket.friends = friends;
     socket.userChannels = userChannels;
   } catch (error) {
@@ -98,7 +99,6 @@ io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
   saveOnlineUser(socket.userId, socket.id);
 
-  // send front-end UserInfo component
   socket.emit('userName', socket.userName);
 
   const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
@@ -221,8 +221,7 @@ io.on('connection', (socket) => {
         friendName: socket.userName,
         state: 'offline',
       };
-      // io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
-      io.emit('OfflineNotify', currentUserInfo);
+      io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
     }
 
     console.log('================');

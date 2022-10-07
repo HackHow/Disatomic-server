@@ -40,10 +40,14 @@ const jwtVerify = async (token, secret) => {
 
 const authentication = async (req, res, next) => {
   let accessToken = req.get('Authorization');
-  accessToken = accessToken.split(' ')[1];
-  // console.log('pass', accessToken);
+  // console.log(accessToken);
+  if (!accessToken) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
 
-  if (accessToken === 'null' || !accessToken) {
+  accessToken = accessToken.split(' ')[1];
+  if (accessToken === 'null') {
     res.status(401).send('Unauthorized');
     return;
   }
