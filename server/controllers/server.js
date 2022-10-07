@@ -12,8 +12,6 @@ const createServer = async (req, res) => {
     return;
   }
 
-  console.log('Create Server Success !');
-
   res.status(200).send(result);
   return;
 };
@@ -32,25 +30,23 @@ const getChannelOfServer = async (req, res) => {
   const serverId = req.params['serverId'];
   const result = await Server.getChannelOfServer(serverId);
 
-  if (result === null) {
-    res.status(200).send('Have not any server');
-    return;
-  }
-
   if (result.error) {
     res.status(500).send('Database Query Error');
     return;
   }
 
-  const channelList = result.channel.map((item) => {
-    return {
-      channelId: item._id,
-      channelName: item.title,
-      isPublic: item.isPublic,
-    };
-  });
+  let channelList = [];
+  if (result.length > 0) {
+    channelList = result.map((item) => {
+      return {
+        channelId: item._id,
+        channelName: item.name,
+        isPublic: item.isPublic,
+      };
+    });
+  }
 
-  res.send({ serverName: result.serverName, channelList: channelList });
+  res.status(200).send({ channelList });
   return;
 };
 module.exports = { getChannelOfServer, createServer, deleteServer };

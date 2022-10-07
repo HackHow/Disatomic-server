@@ -5,11 +5,12 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const cors = require('cors');
-const { API_VERSION, PORT } = process.env;
-const Friend = require('./server/models/friend');
+const dayjs = require('dayjs');
+const { API_VERSION, PORT, SECRET } = process.env;
 const { jwtVerify } = require('./utils/util');
-const { SECRET } = process.env;
+const Friend = require('./server/models/friend');
 const Chat = require('./server/models/chat_record');
+const Channel = require('./server/models/channel');
 
 app.use(cors());
 app.use(express.static('public'));
@@ -68,8 +69,20 @@ io.use(async (socket, next) => {
   }
 
   try {
-    const { userId, userName, userChannels } = await jwtVerify(token, SECRET);
-    const friends = await Friend.getAllFriends(userId);
+    const { userId, userName } = await jwtVerify(token, SECRET);
+    const result = await Channel.getAllChannel(userId);
+    const userChannels = [];
+    if (result.length > 0) {
+      for (let i = 0; i < result.length; i++) {
+        const channel = result[i].serverId.channel;
+        if (channel.length > 0) {
+          for (let j = 0; j < channel.length; j++) {
+            userChannels.push(channel[j].id);
+          }
+        }
+      }
+    }
+    const { friends } = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
     socket.friends = friends;
@@ -89,10 +102,8 @@ io.on('connection', (socket) => {
   socket.emit('userName', socket.userName);
 
   const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
-
   if (friendOnlineList.length > 0) {
     const friendOnlineSocketId = friendOnlineList.map((item) => item.socketId);
-
     const currentUserInfo = {
       friendId: socket.userId,
       friendName: socket.userName,
@@ -131,7 +142,7 @@ io.on('connection', (socket) => {
         fileURL,
         channelId
       );
-      msg.createdAt = chatRecord.createdAt;
+      msg.createdAt = dayjs(chatRecord.createdAt).format('MM/DD/YYYY HH:mm');
       console.log('MultiChat', msg);
 
       io.to(msg.channelId).emit('channelReceiveMessage', msg);
@@ -166,12 +177,7 @@ io.on('connection', (socket) => {
         linkURL,
         fileURL
       );
-
-      msg.createdAt = chatRecord.createdAt;
-      // console.log('Private msg:', msg);
-      // console.log('friendSocketId', friendSocketId);
-
-      // socket.join(friendSocketId);
+      msg.createdAt = dayjs(chatRecord.createdAt).format('MM/DD/YYYY HH:mm');
 
       io.to(friendSocketId).emit('privateReceiveMessage', msg);
 
@@ -180,7 +186,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('JoinCreatedChannel', (channelId) => {
+  socket.on('joinCreatedChannel', (channelId) => {
     // console.log('channelId', channelId);
     socket.join(channelId);
   });

@@ -99,11 +99,10 @@ const deleteServer = async (userId, serverId) => {
 
 const getChannelOfServer = async (serverId) => {
   try {
-    const server = await Server.findById(serverId);
-    // console.log(server);
-    return server;
+    const { channel } = await Server.findById(serverId, { 'channel': 1 });
+    return channel;
   } catch (error) {
-    console.log('ERROR:', error);
+    console.log(error);
     return { error };
   }
 };

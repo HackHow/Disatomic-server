@@ -191,7 +191,7 @@ const getAllFriends = async (userId) => {
       },
     });
 
-    return friends;
+    return { friends };
   } catch (error) {
     console.log(error);
     return { error: 'Database Query Error' };

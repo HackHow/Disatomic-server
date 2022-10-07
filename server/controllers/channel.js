@@ -3,10 +3,10 @@ const Channel = require('../models/channel');
 
 const createChannel = async (req, res) => {
   const { userId } = req.user;
-  const { serverId, channelTitle, isPublic } = req.body;
+  const { serverId, channelName, isPublic } = req.body;
   const result = await Channel.createChannel(
     serverId,
-    channelTitle,
+    channelName,
     isPublic,
     userId
   );
@@ -18,7 +18,7 @@ const createChannel = async (req, res) => {
 
   res.status(200).send({
     channelId: result[0]._id,
-    channelName: result[0].title,
+    channelName: result[0].name,
     isPublic: result[0].isPublic,
   });
   return;
@@ -28,16 +28,6 @@ const deleteChannel = async (req, res) => {
   const { serverId, channelId } = req.body;
   const result = await Channel.deleteChannel(serverId, channelId);
 
-  console.log('result', result);
-  res.send(result);
-  return;
-};
-
-const getChannel = async (req, res) => {
-  const channelId = req.params['channelId'];
-  const result = await Channel.getChannel(channelId);
-
-  // console.log(result);
   res.send(result);
   return;
 };
@@ -56,13 +46,33 @@ const inviteFriendToChannel = async (req, res) => {
     return;
   }
 
-  res.send(result);
+  res.status(200).send(result);
   return;
 };
+
+// const getAllChannel = async (req, res) => {
+//   const { userId } = req.user;
+//   const result = await Channel.getAllChannel(userId);
+
+//   const userChannels = [];
+//   if (result.length > 0) {
+//     for (let i = 0; i < result.length; i++) {
+//       const channel = result[i].serverId.channel;
+//       if (channel.length > 0) {
+//         for (let j = 0; j < channel.length; j++) {
+//           userChannels.push(channel[j]._id);
+//         }
+//       }
+//     }
+//   }
+
+//   res.status(200).send({ userChannels });
+//   return;
+// };
 
 module.exports = {
   createChannel,
   deleteChannel,
-  getChannel,
   inviteFriendToChannel,
+  // getAllChannel,
 };

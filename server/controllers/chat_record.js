@@ -5,9 +5,10 @@ const getMultiChatRecord = async (req, res) => {
   // const { userId } = req.user;
   const channelId = req.params['channelId'];
   const result = await Chat.getMultiChatRecord(channelId);
+  const chatRecord = result[0].channel[0].chatRecord;
 
-  // console.log('result:', result);
-  res.status(200).send(result);
+  res.status(200).send(chatRecord);
+  return;
 };
 
 const getPersonalChatRecord = async (req, res) => {
@@ -15,8 +16,8 @@ const getPersonalChatRecord = async (req, res) => {
   const receiverId = req.params['receiverId'];
   const result = await Chat.getPersonalChatRecord(userId, receiverId);
 
-  // console.log('result:', result);
   res.status(200).send(result);
+  return;
 };
 
 module.exports = { getMultiChatRecord, getPersonalChatRecord };

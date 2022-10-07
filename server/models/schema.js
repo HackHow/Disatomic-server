@@ -124,7 +124,7 @@ const serverSchema = new Schema({
   ],
   channel: [
     {
-      title: String, // 公佈欄
+      name: String, // 公佈欄
       isPublic: Boolean, // false
       // roles: [
       //   {

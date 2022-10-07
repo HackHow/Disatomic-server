@@ -3,14 +3,14 @@ const { User, Server } = require('./schema');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-const createChannel = async (serverId, channelTitle, isPublic, userId) => {
+const createChannel = async (serverId, channelName, isPublic, userId) => {
   try {
     await Server.findByIdAndUpdate(
       serverId,
       {
         $push: {
           channel: {
-            title: channelTitle,
+            name: channelName,
             isPublic: isPublic,
             members: { userId: userId, permission: 'owner' },
           },
@@ -20,7 +20,7 @@ const createChannel = async (serverId, channelTitle, isPublic, userId) => {
     );
 
     const { channel } = await Server.findOne(
-      { 'channel.title': channelTitle },
+      { 'channel.name': channelName },
       { 'channel.$': 1 }
     );
 
@@ -47,26 +47,10 @@ const deleteChannel = async (serverId, channelId) => {
   }
 };
 
-const getChannel = async (channelId) => {
-  try {
-    const channel = await Server.find({
-      'channel._id': channelId,
-    });
-
-    console.log('model channel:', channel);
-
-    // console.log(channel.category[0].channel);
-    return 'ok';
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const inviteFriendToChannel = async (serverId, channelId, friendName) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-
     const user = await User.findOne({ name: friendName }).select({ name: 1 });
 
     await Server.findOneAndUpdate(
@@ -130,9 +114,22 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
   }
 };
 
+const getAllChannel = async (userId) => {
+  try {
+    const { servers } = await User.findById(userId, { 'servers': 1 }).populate({
+      path: 'servers.serverId',
+      select: { 'channel': 1 },
+    });
+
+    return servers;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createChannel,
   deleteChannel,
-  getChannel,
   inviteFriendToChannel,
+  getAllChannel,
 };

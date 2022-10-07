@@ -99,7 +99,7 @@ const getAllFriends = async (req, res) => {
     return;
   }
 
-  res.status(200).send(result);
+  res.status(200).send({ allFriends: result.friends });
   return;
 };
 

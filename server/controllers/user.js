@@ -67,24 +67,11 @@ const signIn = async (req, res) => {
     return;
   }
 
-  const userChannels = [];
-  if (result.servers.length > 0) {
-    for (let i = 0; i < result.servers.length; i++) {
-      const { channel } = result.servers[i].serverId;
-      if (channel.length > 0) {
-        for (let j = 0; j < channel.length; j++) {
-          userChannels.push(channel[j]._id);
-        }
-      }
-    }
-  }
-
   if (await argon2.verify(result.password, password)) {
     const jwtToken = await jwtSign(
       {
         userId: result._id,
         userName: result.name,
-        userChannels: userChannels,
       },
       SECRET,
       EXPIRED
@@ -92,7 +79,7 @@ const signIn = async (req, res) => {
     res.status(200).send({ accessToken: jwtToken, expired: EXPIRED });
     return;
   } else {
-    res.status(401).send('Wrong Password');
+    res.status(403).send('Wrong Password');
     return;
   }
 };

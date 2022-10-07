@@ -18,15 +18,12 @@ const signUp = async (name, email, password) => {
 
 const signIn = async (email) => {
   try {
-    const { _id, name, password, servers } = await User.findOne(
+    const { _id, name, password } = await User.findOne(
       { email },
       '_id name password servers'
-    ).populate({
-      path: 'servers.serverId',
-      select: { 'channel': 1 },
-    });
+    );
 
-    return { _id, name, password, servers };
+    return { _id, name, password };
   } catch (error) {
     console.log('error:', error.message);
     return { error: error.message };

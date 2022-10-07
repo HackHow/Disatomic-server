@@ -24,8 +24,6 @@ const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
       },
     });
 
-    const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
-
     await Server.findOneAndUpdate(
       {
         'channel._id': channelId,
@@ -41,11 +39,11 @@ const saveMultiChatRecord = async (senderId, text, links, files, channelId) => {
     );
 
     await session.commitTransaction();
-    return { createdAt: dateTime };
+    return { createdAt: chat.createdAt };
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    return error;
+    return { error };
   } finally {
     session.endSession();
   }
@@ -65,12 +63,7 @@ const getMultiChatRecord = async (channelId) => {
       },
     });
 
-    const chatRecord = chat[0].channel[0].chatRecord;
-    // console.log(chatRecord);
-    // const test = chatRecord.map((item) => item.senderId.name);
-    // console.log(test);
-
-    return chatRecord;
+    return chat;
   } catch (error) {
     console.log(error);
     return { error };
@@ -96,9 +89,8 @@ const savePersonalChatRecord = async (
         fileURL: files,
       },
     });
-    const dateTime = dayjs(chat.createdAt).format('MM/DD/YYYY HH:mm');
 
-    return { createdAt: dateTime };
+    return chat;
   } catch (error) {
     console.log(error);
     return error;
