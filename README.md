@@ -1,5 +1,5 @@
 ![Logo](./Disatomic_Logo.png)
-### __<p align="center">A minimal online chat service that provided a cross-platform desktop application with <a href="https://www.electronjs.org/">Electron</a>.</p>__
+### __<p align="center" target="_blank">A minimal online chat service that provided a cross-platform desktop application with <a href="https://www.electronjs.org/">Electron</a>.</p>__
 
 ## Demo
 
