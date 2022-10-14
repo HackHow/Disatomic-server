@@ -1,5 +1,6 @@
 node_modules/
 public/assets/
+test/
 .env
 socket.js
 # test files
