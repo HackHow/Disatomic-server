@@ -13,6 +13,8 @@ An online chat service includes links and files that automatically record chat c
 - [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 
+## Motivation
+
 ## Features
 
 - Stored automaitcally files and links in chat room
