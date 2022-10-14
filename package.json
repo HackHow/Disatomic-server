@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "mongo": "nodemon script.js"
+    "mongo": "nodemon script.js",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -21,10 +22,13 @@
     "nodemon": "^2.0.19",
     "random": "^3.0.6",
     "socket.io": "^4.5.1",
+    "supertest": "^6.3.0",
     "util": "^0.12.4",
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "cors": "^2.8.5"
+    "chai": "^4.3.6",
+    "cors": "^2.8.5",
+    "mocha": "^10.0.0"
   }
 }
