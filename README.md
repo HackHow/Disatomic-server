@@ -1,37 +1,22 @@
-## **This is Disatomic project with Express**
+![Logo](./Disatomic_Logo.png)
+__<p align="center">A minimal online chat service, and provided both website and cross-platform desktop application with <a href="https://www.electronjs.org/">Electron</a>.</p>__
 
-**_2022/09/15_**
+## Demo
 
-- **Modify signIn signUp api log**
-- **Add userInfo api**
+[Demo video](https://drive.google.com/file/d/1x9eUrFunTPjnNZyUa8nAw0Lkrj1JphJY/view)
 
-**_2022/09/13_**
+## Table of Contents
 
-- **Add user own server api**
-- **Add cancel friend invitation api**
-- **Add reject friend invitation api**
-- **Add accept friend invitation api**
-- **Demo sprint2**
-- **Add user profile api**
-- **Add delete server api**
+- [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
+- [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 
-**_2022/09/12_**
+## Motivation
 
-- **Move mongoDB to cloud because it's necessary to use transaction**
-- **Add Create server api**
+## Features
 
-**_2022/09/11_**
-
-- **Add JWT token sign and verify with jsonwebtoken**
-- **Add hash password and verify password with argon2 package**
-- **Add invite friend API**
-
-**_2022/09/08_**
-
-- **Create MVC architecture**
-- **Create server repo**
-- **Add socket.io connected**
-- **Add mongoDB connected**
-- **Add multer util**
-- **Add user API include signin and signup**
-- **Add uploadfiles API**
+- Stored automaitcally files and links in chat room
+- Created Workspaces and channels
+- Cross-platform desktop applications
+- Identified text containing http or https and turn it into a link
+- Previewed user-uploaded images
+- Real-time notification mechanism
