@@ -13,8 +13,8 @@ const checkHasFriend = async (senderId, friendName) => {
 
     return friends;
   } catch (error) {
-    console.log(error);
-    return { error: `You're already friends with that user!` };
+    console.log('error', error);
+    return { error };
   }
 };
 
@@ -44,7 +44,7 @@ const sendInvitation = async (senderId, friendName) => {
     return `Success! Your friend request to ${friendName} was sent`;
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
+    console.log('error:', error);
     return { error: `User not found` };
   } finally {
     session.endSession();
