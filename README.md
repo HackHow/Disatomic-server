@@ -10,8 +10,8 @@ An online chat service includes links and files that automatically record chat c
 
 ## Table of Contents
 
-- [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop/#Motivation)
-- [Features](https://github.com/HackHow/Disatomic-server/tree/develop/#Features)
+- [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
+- [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 
 ## Features
 
