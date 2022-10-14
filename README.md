@@ -17,6 +17,6 @@ __<p align="center">A minimal online chat service, and provided both website and
 - Stored automaitcally files and links in chat room
 - Created Workspaces and channels
 - Cross-platform desktop applications
-- Identified text containing HTTP or HTTPS and turn it into a link
+- Identified text containing http or https and turn it into a link
 - Previewed user-uploaded images
 - Real-time notification mechanism
