@@ -1,8 +1,5 @@
 ![Logo](./Disatomic_Logo.png)
-
-# Disatomic
-
-An online chat service includes links and files that automatically record chat content
+### __<p align="center">A minimal online chat service that provided a cross-platform desktop application with <a href="https://www.electronjs.org/">Electron</a>.</p>__
 
 ## Demo
 
