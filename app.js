@@ -69,6 +69,7 @@ io.use(async (socket, next) => {
   }
 
   try {
+    // console.log('AAAAA');
     const { userId, userName } = await jwtVerify(token, SECRET);
     const result = await Channel.getAllChannel(userId);
     const userChannels = [];
@@ -85,14 +86,14 @@ io.use(async (socket, next) => {
     const { friends } = await Friend.getAllFriends(userId);
     socket.userId = userId;
     socket.userName = userName;
-    console.log('userName', socket.userName);
     socket.friends = friends;
     socket.userChannels = userChannels;
+
+    next();
   } catch (error) {
     console.log(error);
     next(new Error('Verify error!'));
   }
-  next();
 });
 
 io.on('connection', (socket) => {
@@ -143,7 +144,7 @@ io.on('connection', (socket) => {
         channelId
       );
       msg.createdAt = dayjs(chatRecord.createdAt).format('MM/DD/YYYY HH:mm');
-      console.log('MultiChat', msg);
+      // console.log('MultiChat', msg);
 
       io.to(msg.channelId).emit('channelReceiveMessage', msg);
     }
@@ -234,5 +235,7 @@ app.use(function (err, req, res, next) {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server listening on *:${PORT}`);
+  console.log(`Server listening on ducking *:${PORT}`);
 });
+
+module.exports = app;
