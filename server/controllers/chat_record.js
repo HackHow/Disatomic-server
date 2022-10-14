@@ -5,6 +5,12 @@ const getMultiChatRecord = async (req, res) => {
   // const { userId } = req.user;
   const channelId = req.params['channelId'];
   const result = await Chat.getMultiChatRecord(channelId);
+
+  if (result.length === 0 || result.error) {
+    res.status(404).send('Channel not found');
+    return;
+  }
+
   const chatRecord = result[0].channel[0].chatRecord;
 
   res.status(200).send(chatRecord);
