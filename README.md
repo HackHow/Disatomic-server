@@ -8,11 +8,18 @@ __<p align="center">A minimal online chat service, and provided both website and
 ## Table of Contents
 
 - [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
+- [Get start]()
+- [requirement]
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
+- [Usage]
+- [implementation details of online notification mechanism]
+- [architecture]
+- [roadmap]
 
-## Motivation
+## Introduction
+Disatomic is a chat room that automatically stores files and links, 
 
-I want to create a chat room that automatically stores files and links because the primary communication platform is Discord in the training camp, where students and professors frequently share specific technical articles or files. Still, I can't find something quickly in the chat room when I want to find something. It isn't easy to access files or web links that have already been sent.
+I want to create  because the primary communication platform is Discord in the training camp, where students and professors frequently share specific technical articles or files. Still, I can't find something quickly in the chat room when I want to find something. It isn't easy to access files or web links that have already been sent.
 
 ## Features
 Disatomic provides the following features:
