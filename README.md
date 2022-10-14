@@ -1,37 +1,23 @@
-## **This is Disatomic project with Express**
+![Logo](./Disatomic_Logo.png)
 
-**_2022/09/15_**
+# Disatomic
 
-- **Modify signIn signUp api log**
-- **Add userInfo api**
+An online chat service includes links and files that automatically record chat content
 
-**_2022/09/13_**
+## Demo
 
-- **Add user own server api**
-- **Add cancel friend invitation api**
-- **Add reject friend invitation api**
-- **Add accept friend invitation api**
-- **Demo sprint2**
-- **Add user profile api**
-- **Add delete server api**
+[Demo video](https://drive.google.com/file/d/1x9eUrFunTPjnNZyUa8nAw0Lkrj1JphJY/view)
 
-**_2022/09/12_**
+## Table of Contents
 
-- **Move mongoDB to cloud because it's necessary to use transaction**
-- **Add Create server api**
+- [Motivation](https://github.com/HackHow/Disatomic-React/edit/develop/README.md/#Motivation)
+- [Features](https://github.com/HackHow/Disatomic-React/edit/develop/README.md/#Features)
 
-**_2022/09/11_**
+## Features
 
-- **Add JWT token sign and verify with jsonwebtoken**
-- **Add hash password and verify password with argon2 package**
-- **Add invite friend API**
-
-**_2022/09/08_**
-
-- **Create MVC architecture**
-- **Create server repo**
-- **Add socket.io connected**
-- **Add mongoDB connected**
-- **Add multer util**
-- **Add user API include signin and signup**
-- **Add uploadfiles API**
+- Stored automaitcally files and links in chat room
+- Created Workspaces and channels
+- Cross-platform desktop applications
+- Identified text containing HTTP or HTTPS and turn it into a link
+- Previewed user-uploaded images
+- Real-time notification mechanism
