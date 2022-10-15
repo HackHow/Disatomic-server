@@ -27,7 +27,7 @@ I want to create a chat room that automatically stores files and links because t
 - [MongoDB Clusters](https://www.mongodb.com/atlas/database)
 
 ## Getting Started
-```
+```shell
 # Clone front-end repository and back-end repository
 $ git clone git@github.com:HackHow/Disatomic-React.git
 $ git clone git@github.com:HackHow/Disatomic-server.git 
