@@ -11,7 +11,7 @@ __<p align="center">A minimal online chat service, and provided both website and
 
 - [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
 - [Requirement](https://github.com/HackHow/Disatomic-server/tree/develop#Requirement)
-- [Getting Started](https://github.com/HackHow/Disatomic-server/tree/develop#Getting Started)
+- [Getting Started](https://github.com/HackHow/Disatomic-server/tree/develop#Getting-Started)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 - [How To Use](https://github.com/HackHow/Disatomic-server/tree/develop#How-To-Use)
 - [Download]()
@@ -38,11 +38,11 @@ $ cd Disatomic-server
 
 # Install dependencies
 $ yarn install (front-end)
-$ npm install (backe-end)
+$ npm install (backend-end)
 
 # Run the app
 $ yarn start (front-end)
-$ npm start (backe-end)
+$ npm start (backend-end)
 ```
 需要填入 mongodb 的 clusters 的 URI
 
