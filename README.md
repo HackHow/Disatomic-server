@@ -37,12 +37,16 @@ $ cd Disatomic-React
 $ cd Disatomic-server
 
 # Install dependencies
-$ yarn install (front-end)
-$ npm install (backend-end)
+## Front-End
+$ yarn install
+
+$ npm install 
 
 # Run the app
-$ yarn start (front-end)
-$ npm start (backend-end)
+## Front-End
+$ yarn start
+## Backend-End
+$ npm start
 ```
 需要填入 mongodb 的 clusters 的 URI
 
