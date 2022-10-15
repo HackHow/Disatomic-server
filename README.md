@@ -13,9 +13,8 @@ __<p align="center">A minimal online chat service, and provided both website and
 - [Requirement](https://github.com/HackHow/Disatomic-server/tree/develop#Requirement)
 - [Getting Started](https://github.com/HackHow/Disatomic-server/tree/develop#Getting Started)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
-- [How To Use](https://github.com/HackHow/Disatomic-server/tree/develop#How To Use)
+- [How To Use](https://github.com/HackHow/Disatomic-server/tree/develop#How-To-Use)
 - [Download]()
-- [Implementation details of online notification mechanism]
 - [Architecture](https://github.com/HackHow/Disatomic-server/tree/develop#Architecture)
 - [Roadmap]()
 
