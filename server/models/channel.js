@@ -51,10 +51,10 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
   const session = await conn.startSession();
   try {
     session.startTransaction();
-    const user = await User.findOne({ name: friendName }).select({ name: 1 });
+    const user = await User.findOne({ name: friendName }, 'name');
 
-    await Server.findOneAndUpdate(
-      { serverId },
+    const { _id, serverName } = await Server.findOneAndUpdate(
+      { _id: serverId },
       {
         $addToSet: { members: user._id },
         $addToSet: { 'roles.3.usersId': user._id },
@@ -62,7 +62,23 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
       { new: true }
     );
 
-    await Server.findOneAndUpdate(
+    const userServers = {
+      serverId: _id,
+      serverName: serverName,
+    };
+
+    // const test = await Server.findOneAndUpdate(
+    //   { serverId },
+    //   {
+    //     $addToSet: { members: user._id },
+    //     $addToSet: { 'roles.3.usersId': user._id },
+    //   },
+    //   { new: true }
+    // );
+
+    // console.log('test', test);
+
+    const { channel } = await Server.findOneAndUpdate(
       { 'channel._id': channelId },
       {
         $addToSet: {
@@ -75,13 +91,20 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
       { new: true }
     ).exec();
 
+    const channelList = channel.map((item) => {
+      return {
+        channelId: item._id,
+        channelName: item.name,
+        isPublic: item.isPublic,
+      };
+    });
+
     const selectChannel = await Server.aggregate([
       { $match: { 'channel._id': ObjectId(channelId) } },
     ]);
 
-    let channelMembersInfo;
-
     // console.log('selectChannel', selectChannel);
+    let channelMembersInfo;
 
     channelMembersInfo = selectChannel[0].channel.filter(
       (item) => item._id.toString() === channelId
@@ -104,7 +127,13 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
     );
 
     await session.commitTransaction();
-    return 'Invite friend to channel success';
+    return {
+      msg: 'Invite friend to channel success',
+      receiverId: user._id,
+      userServers: userServers,
+      channelList: channelList,
+    };
+    // return 'Invite friend to channel success';
   } catch (error) {
     await session.abortTransaction();
     console.log(error);

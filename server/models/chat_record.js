@@ -109,7 +109,7 @@ const getPersonalChatRecord = async (senderId, receiverId) => {
       select: { 'name': 1, 'id': 1 },
     });
 
-    console.log(chat);
+    // console.log(chat);
     return chat;
   } catch (error) {
     console.log(error);

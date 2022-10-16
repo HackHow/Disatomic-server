@@ -206,6 +206,19 @@ io.on('connection', (socket) => {
     io.to(receiverSocketId).emit('NotifyReceiverCancel', incomingFriendReq);
   });
 
+  socket.on(
+    'InviteFriendToChannel',
+    ({ receiverId, userServers, channelList }) => {
+      const receiverSocketId = allOnlineUser[receiverId] || '';
+      const channelIdArray = channelList.map((item) => item.channelId);
+      // socket.join(channelIdArray);
+      io.to(receiverSocketId).emit('receiverJoinChannel', {
+        userServers,
+        channelList,
+      });
+    }
+  );
+
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
     deleteOfflineUser(socket.userId);
