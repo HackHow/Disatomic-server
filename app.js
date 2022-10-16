@@ -69,7 +69,6 @@ io.use(async (socket, next) => {
   }
 
   try {
-    // console.log('AAAAA');
     const { userId, userName } = await jwtVerify(token, SECRET);
     const result = await Channel.getAllChannel(userId);
     const userChannels = [];
@@ -235,7 +234,7 @@ app.use(function (err, req, res, next) {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server listening on ducking *:${PORT}`);
+  console.log(`Server listening on *:${PORT}`);
 });
 
 module.exports = app;
