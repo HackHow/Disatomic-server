@@ -10,10 +10,9 @@
 ## Table of Contents
 
 - [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
-- [Requirement](https://github.com/HackHow/Disatomic-server/tree/develop#Requirement)
+- [Tech Stack](https://github.com/HackHow/Disatomic-server/tree/develop#Tech-Stack)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 - [Try Out](https://github.com/HackHow/Disatomic-server/tree/develop#Try-Out)
-- [Download](https://github.com/HackHow/Disatomic-server/tree/develop#Download)
 - [Architecture](https://github.com/HackHow/Disatomic-server/tree/develop#Architecture)
 - [Contact](https://github.com/HackHow/Disatomic-server/tree/develop#Contact)
 
@@ -21,11 +20,18 @@
 
 I want to create a chat room that automatically stores files and links because the primary communication platform is Discord in the training camp, where students and teachers frequently share specific technical articles or files. Still, I can't find something quickly in the chat room when I want to find something. It is not easy to access files or web links that have already been sent.
 
-## Requirement
-
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git/)
-- [Node.js](https://nodejs.org/en/download/)
-- [MongoDB Clusters](https://www.mongodb.com/atlas/database)
+## Tech Stack
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=for-the-badge&logo=electron&logoColor=9FEAF9)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white)
+![JS](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
+![]()
 
 ## Features
 
@@ -60,10 +66,6 @@ _user3_
 email: demo3@test.com
 password: abcdef
 ```
-
-## Download
-
-Users can download the latest installable version of Disatomic for Windows and macOS.
 
 ## Architecture
 
