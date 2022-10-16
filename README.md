@@ -13,7 +13,7 @@ __<p align="center">A minimal online chat service, and provided both website and
 - [Requirement](https://github.com/HackHow/Disatomic-server/tree/develop#Requirement)
 - [Getting Started](https://github.com/HackHow/Disatomic-server/tree/develop#Getting-Started)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
-- [How To Use](https://github.com/HackHow/Disatomic-server/tree/develop#How-To-Use)
+- [Try Out](https://github.com/HackHow/Disatomic-server/tree/develop#Try-Out)
 - [Download]()
 - [Architecture](https://github.com/HackHow/Disatomic-server/tree/develop#Architecture)
 - [Roadmap]()
@@ -34,7 +34,7 @@ I want to create a chat room that automatically stores files and links because t
 - Previewed user-uploaded images
 - Real-time notification mechanism
 
-## How To Use
+## Try Out
 Provide three sets of test accounts to users. Through these test accounts, you can add friends and private messages and create multi-person chat rooms. In addition, users can also register a new account.
 
 _user1_
