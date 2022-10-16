@@ -76,6 +76,6 @@ password: abcdef
 If you have some suggestions or feedback, please get in touch with me.
 
 
-![<howardshen2306@gmail.com>](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)
 
+<a href="howardshen2306@gmail.com" ref="nofollow"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" /></a>
 ![LINKEDIN](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)
