@@ -11,12 +11,12 @@
 
 - [Motivation](https://github.com/HackHow/Disatomic-server/tree/develop#Motivation)
 - [Requirement](https://github.com/HackHow/Disatomic-server/tree/develop#Requirement)
-- [Getting Started](https://github.com/HackHow/Disatomic-server/tree/develop#Getting-Started)
 - [Features](https://github.com/HackHow/Disatomic-server/tree/develop#Features)
 - [Try Out](https://github.com/HackHow/Disatomic-server/tree/develop#Try-Out)
 - [Download]()
 - [Architecture](https://github.com/HackHow/Disatomic-server/tree/develop#Architecture)
 - [Roadmap]()
+- [Contact](https://github.com/HackHow/Disatomic-server/tree/develop#Contact)
 
 ## Motivation
 
@@ -69,3 +69,8 @@ Users can download the latest installable version of Disatomic for Windows and m
 ## Architecture
 
 ![architecture](./public/architecture.jpg)
+
+## Contact
+If you have some suggestions or feedback, please get in touch with me.
+
+<howardshen2306@gmail.com>
