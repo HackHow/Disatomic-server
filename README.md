@@ -38,9 +38,6 @@ I want to create a chat room that automatically stores files and links because t
 ![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 
-
-
-
 ## Features
 
 - Stored automaitcally files and links in chat room
@@ -81,8 +78,6 @@ password: abcdef
 
 ## Contact
 If you have some suggestions or feedback, please get in touch with me.
-
-
 
 <a href="mailto:howardshen2306@gmail.com" ref="nofollow"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" /></a>
 
