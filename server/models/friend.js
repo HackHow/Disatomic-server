@@ -41,7 +41,7 @@ const sendInvitation = async (senderId, friendName) => {
     ).exec();
 
     await session.commitTransaction();
-    return `Success! Your friend request to ${friendName} was sent`;
+    return `Success! Your friend request to <I>${friendName}</I> was sent`;
   } catch (error) {
     await session.abortTransaction();
     console.log('error:', error);

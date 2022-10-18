@@ -128,7 +128,7 @@ const inviteFriendToChannel = async (serverId, channelId, friendName) => {
 
     await session.commitTransaction();
     return {
-      msg: 'Invite friend to channel success',
+      msg: 'User has been invited to the channel successfully.',
       receiverId: user._id,
       userServers: userServers,
       channelList: channelList,

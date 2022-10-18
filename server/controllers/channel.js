@@ -20,6 +20,7 @@ const createChannel = async (req, res) => {
     channelId: result[0]._id,
     channelName: result[0].name,
     isPublic: result[0].isPublic,
+    msg: 'Created a channel successfully',
   });
   return;
 };
@@ -42,7 +43,7 @@ const inviteFriendToChannel = async (req, res) => {
   );
 
   if (result.error) {
-    res.status(500).send(result.error);
+    res.status(404).send({ msg: 'Please provide a valid username' });
     return;
   }
 
