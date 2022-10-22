@@ -17,9 +17,10 @@ const createChannel = async (req, res) => {
   }
 
   res.status(200).send({
-    channelId: result[0]._id,
-    channelName: result[0].name,
-    isPublic: result[0].isPublic,
+    serverMembers: result.members,
+    channelId: result.channel[0]._id,
+    channelName: result.channel[0].name,
+    isPublic: result.channel[0].isPublic,
     msg: 'Created a channel successfully',
   });
   return;
@@ -51,29 +52,8 @@ const inviteFriendToChannel = async (req, res) => {
   return;
 };
 
-// const getAllChannel = async (req, res) => {
-//   const { userId } = req.user;
-//   const result = await Channel.getAllChannel(userId);
-
-//   const userChannels = [];
-//   if (result.length > 0) {
-//     for (let i = 0; i < result.length; i++) {
-//       const channel = result[i].serverId.channel;
-//       if (channel.length > 0) {
-//         for (let j = 0; j < channel.length; j++) {
-//           userChannels.push(channel[j]._id);
-//         }
-//       }
-//     }
-//   }
-
-//   res.status(200).send({ userChannels });
-//   return;
-// };
-
 module.exports = {
   createChannel,
   deleteChannel,
   inviteFriendToChannel,
-  // getAllChannel,
 };
