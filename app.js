@@ -48,6 +48,8 @@ function deleteOfflineUser(userId) {
 
 function getOnlineFriend(allOnlineUser, friendList) {
   const friendInOnline = [];
+  // console.log('allOnlineUser', allOnlineUser);
+  // console.log('friendList', friendList);
   for (let i = 0; i < friendList.length; i++) {
     if (allOnlineUser[friendList[i].id]) {
       friendInOnline.push({
@@ -97,14 +99,23 @@ io.use(async (socket, next) => {
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
+
   saveOnlineUser(socket.userId, socket.id);
 
   socket.emit('userName', socket.userName);
 
-  const friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
+  let friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
+
+  socket.on('getOnlineFriend', () => {
+    if (friendOnlineList.length > 0) {
+      socket.emit('onlineFriend', friendOnlineList);
+    }
+  });
+
   if (friendOnlineList.length > 0) {
     const friendOnlineSocketId = friendOnlineList.map((item) => item.socketId);
     const currentUserInfo = {
+      socketId: socket.id,
       friendId: socket.userId,
       friendName: socket.userName,
       state: 'online',
@@ -113,10 +124,8 @@ io.on('connection', (socket) => {
     io.to(friendOnlineSocketId).emit('onlineNotify', currentUserInfo);
   }
 
-  socket.on('getOnlineFriend', () => {
-    if (friendOnlineList.length > 0) {
-      socket.emit('onlineFriend', friendOnlineList);
-    }
+  socket.on('addOnlineFriendToList', (data) => {
+    friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
   });
 
   socket.join(socket.userChannels);
@@ -250,13 +259,15 @@ io.on('connection', (socket) => {
       const friendOnlineSocketId = friendOnlineList.map(
         (item) => item.socketId
       );
+      // console.log('friendOnlineList', friendOnlineList);
 
-      // console.log('friendOnlineSocketId', friendOnlineSocketId);
       const currentUserInfo = {
         friendId: socket.userId,
         friendName: socket.userName,
         state: 'offline',
       };
+
+      // console.log('before emit offlineNotify', friendOnlineSocketId);
       io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
     }
 
