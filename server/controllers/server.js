@@ -49,4 +49,9 @@ const getChannelOfServer = async (req, res) => {
   res.status(200).send({ channelList });
   return;
 };
-module.exports = { getChannelOfServer, createServer, deleteServer };
+
+module.exports = {
+  getChannelOfServer,
+  createServer,
+  deleteServer,
+};
