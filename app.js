@@ -186,8 +186,29 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('joinCreatedChannel', (channelId) => {
-    // console.log('channelId', channelId);
+  socket.on(
+    'joinCreatedChannel',
+    async ({ serverMembers, channelId, channelName }) => {
+      socket.join(channelId);
+
+      // except create channel user
+      const membersInServer = serverMembers.filter(
+        (item) => item !== socket.userId
+      );
+
+      let membersSocketId = [];
+      for (let i = 0; i < membersInServer.length; i++) {
+        membersSocketId.push(allOnlineUser[membersInServer[i]]);
+      }
+
+      io.to(membersSocketId).emit('renderChannelForMembers', {
+        channelId,
+        channelName,
+      });
+    }
+  );
+
+  socket.on('serverMembersJoinChannel', (channelId) => {
     socket.join(channelId);
   });
 
