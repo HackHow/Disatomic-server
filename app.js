@@ -124,7 +124,7 @@ io.on('connection', (socket) => {
     io.to(friendOnlineSocketId).emit('onlineNotify', currentUserInfo);
   }
 
-  socket.on('addOnlineFriendToList', (data) => {
+  socket.on('addOnlineFriendToList', () => {
     friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
   });
 
