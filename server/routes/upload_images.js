@@ -1,15 +1,15 @@
 const router = require('express').Router();
 // const { mongoDB } = require('../../util/mongodb');
-const { upload } = require('../../utils/util');
-const { uploadImages } = require('../controllers/upload_images');
+const { uploadS3 } = require('../../utils/util');
+const { uploadImageToS3 } = require('../controllers/upload_images');
 const { authentication } = require('../../utils/util');
 
 router
   .route('/uploadfiles')
   .post(
     authentication,
-    upload.fields([{ name: 'files', maxCount: 5 }]),
-    uploadImages
+    uploadS3.fields([{ name: 'files', maxCount: 5 }]),
+    uploadImageToS3
   );
 
 module.exports = router;

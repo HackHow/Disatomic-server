@@ -1,7 +1,7 @@
 require('dotenv').config();
-const { DNS, SYSTEM } = process.env;
+const { DNS, SYSTEM, AWS_BUCKET_REGION, AWS_CLOUD_FRONT } = process.env;
 
-const uploadImages = async (req, res) => {
+const uploadImagesToLocal = async (req, res) => {
   const { files } = req.files;
   const filesPath = files[0].path;
 
@@ -19,4 +19,12 @@ const uploadImages = async (req, res) => {
   return;
 };
 
-module.exports = { uploadImages };
+const uploadImageToS3 = async (req, res) => {
+  const { files } = req.files;
+  // const pictureURL = `https://disatomic.s3.${AWS_BUCKET_REGION}.amazonaws.com/${files[0].key}`;
+  const pictureURL = `https://${AWS_CLOUD_FRONT}/${files[0].key}`;
+  res.status(200).send({ pictureURL });
+  return;
+};
+
+module.exports = { uploadImagesToLocal, uploadImageToS3 };

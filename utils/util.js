@@ -5,10 +5,37 @@ const path = require('path');
 const dayjs = require('dayjs');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
-const { SECRET } = process.env;
-const { USER_ROLE } = require('../server/models/server');
+const {
+  SECRET,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_BUCKET_NAME,
+  AWS_BUCKET_REGION,
+} = process.env;
+const { S3Client } = require('@aws-sdk/client-s3');
+const multerS3 = require('multer-s3');
+const { v4: uuidv4 } = require('uuid');
 
-const upload = multer({
+const s3 = new S3Client({
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  region: AWS_BUCKET_REGION,
+});
+
+const uploadS3 = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: AWS_BUCKET_NAME,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, `${uuidv4()}-${file.originalname}`);
+    },
+  }),
+});
+
+const uploadLocal = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       const filesPath = path.join(
@@ -63,4 +90,10 @@ const authentication = async (req, res, next) => {
   }
 };
 
-module.exports = { upload, jwtSign, jwtVerify, authentication };
+module.exports = {
+  uploadS3,
+  uploadLocal,
+  jwtSign,
+  jwtVerify,
+  authentication,
+};
