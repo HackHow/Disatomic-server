@@ -210,10 +210,12 @@ io.on('connection', (socket) => {
         membersSocketId.push(allOnlineUser[membersInServer[i]]);
       }
 
-      io.to(membersSocketId).emit('renderChannelForMembers', {
-        channelId,
-        channelName,
-      });
+      if (membersSocketId.length > 0) {
+        io.to(membersSocketId).emit('renderChannelForMembers', {
+          channelId,
+          channelName,
+        });
+      }
     }
   );
 
@@ -242,14 +244,18 @@ io.on('connection', (socket) => {
       if (receiverId !== undefined) {
         const receiverSocketId = allOnlineUser[receiverId] || '';
         const channelIdArray = channelList.map((item) => item.channelId);
-        socket.join(channelIdArray);
-        io.to(receiverSocketId).emit('receiverJoinChannel', {
+        io.to(receiverSocketId).emit('receiverRenderServerAndChannel', {
           userServers,
           channelList,
+          channelIdArray,
         });
       }
     }
   );
+
+  socket.on('receiverJoinChannel', (channelIdArray) => {
+    socket.join(channelIdArray);
+  });
 
   socket.on('disconnect', () => {
     console.log('user disconnected:', socket.id);
