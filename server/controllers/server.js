@@ -27,7 +27,6 @@ const deleteServer = async (req, res) => {
 
 const getChannelOfServer = async (req, res) => {
   const serverId = req.params['serverId'];
-  console.log(serverId);
   const result = await Server.getChannelOfServer(serverId);
 
   if (result.error) {
