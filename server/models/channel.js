@@ -39,7 +39,6 @@ const deleteChannel = async (serverId, channelId) => {
       { new: true }
     );
 
-    // console.log(channel);
     return 'Delete channel success';
   } catch (error) {
     console.log(error);
