@@ -98,7 +98,10 @@ io.use(async (socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(`User Connected: ${socket.id}`);
+  console.log(
+    `User Connected:    ${socket.id}`,
+    `***${new Date().toISOString()}***`
+  );
 
   saveOnlineUser(socket.userId, socket.id);
 
@@ -262,14 +265,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('user disconnected:', socket.id);
+    console.log(
+      `User disconnected: ${socket.id}`,
+      `***${new Date().toISOString()}***`
+    );
     deleteOfflineUser(socket.userId);
 
     if (friendOnlineList.length > 0) {
       const friendOnlineSocketId = friendOnlineList.map(
         (item) => item.socketId
       );
-      // console.log('friendOnlineList', friendOnlineList);
 
       const currentUserInfo = {
         friendId: socket.userId,
@@ -277,7 +282,6 @@ io.on('connection', (socket) => {
         state: 'offline',
       };
 
-      // console.log('before emit offlineNotify', friendOnlineSocketId);
       io.to(friendOnlineSocketId).emit('OfflineNotify', currentUserInfo);
     }
 
