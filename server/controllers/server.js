@@ -17,7 +17,6 @@ const createServer = async (req, res) => {
 };
 
 const deleteServer = async (req, res) => {
-  //const {serverId} = req.params
   const { userId, serverId } = req.body;
   const result = await Server.deleteServer(userId, serverId);
 

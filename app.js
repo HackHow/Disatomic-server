@@ -18,7 +18,7 @@ app.use(express.json());
 
 // API routes
 app.use('/api/' + API_VERSION, [
-  require('./server/routes/upload_images'),
+  require('./server/routes/upload'),
   require('./server/routes/user'),
   require('./server/routes/friend'),
   require('./server/routes/server'),
@@ -48,12 +48,11 @@ function deleteOfflineUser(userId) {
 
 function getOnlineFriend(allOnlineUser, friendList) {
   const friendInOnline = [];
-  // console.log('allOnlineUser', allOnlineUser);
-  // console.log('friendList', friendList);
   for (let i = 0; i < friendList.length; i++) {
     if (allOnlineUser[friendList[i].id]) {
       friendInOnline.push({
         socketId: allOnlineUser[friendList[i].id],
+        friendAvatarURL: friendList[i].avatarURL,
         friendId: friendList[i].id,
         friendName: friendList[i].name,
         state: 'online',
@@ -71,7 +70,7 @@ io.use(async (socket, next) => {
   }
 
   try {
-    const { userId, userName } = await jwtVerify(token, SECRET);
+    const { userId, userAvatar, userName } = await jwtVerify(token, SECRET);
     const result = await Channel.getAllChannel(userId);
     const userChannels = [];
     if (result.length > 0) {
@@ -86,6 +85,7 @@ io.use(async (socket, next) => {
     }
     const { friends } = await Friend.getAllFriends(userId);
     socket.userId = userId;
+    socket.userAvatar = userAvatar;
     socket.userName = userName;
     socket.friends = friends;
     socket.userChannels = userChannels;
@@ -103,6 +103,7 @@ io.on('connection', (socket) => {
   saveOnlineUser(socket.userId, socket.id);
 
   socket.emit('userName', socket.userName);
+  socket.emit('userAvatar', socket.userAvatar);
 
   let friendOnlineList = getOnlineFriend(allOnlineUser, socket.friends);
 
@@ -116,6 +117,7 @@ io.on('connection', (socket) => {
     const friendOnlineSocketId = friendOnlineList.map((item) => item.socketId);
     const currentUserInfo = {
       socketId: socket.id,
+      friendAvatarURL: socket.userAvatar,
       friendId: socket.userId,
       friendName: socket.userName,
       state: 'online',
@@ -133,6 +135,7 @@ io.on('connection', (socket) => {
   socket.on('channelSendMessage', async (msg) => {
     msg.userId = socket.userId;
     msg.sender = {};
+    msg.sender.avatarURL = socket.userAvatar;
     msg.sender.name = socket.userName.split('#')[0];
 
     if (msg.text || msg.files.fileURL || msg.links.linkURL) {
@@ -161,6 +164,7 @@ io.on('connection', (socket) => {
   socket.on('privateSendMessage', async (msg) => {
     msg.sender = {};
     msg.sender.id = socket.userId;
+    msg.sender.avatarURL = socket.userAvatar;
     msg.sender.name = socket.userName.split('#')[0];
 
     let friendSocketId;

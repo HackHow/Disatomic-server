@@ -18,12 +18,12 @@ const signUp = async (name, email, password) => {
 
 const signIn = async (email) => {
   try {
-    const { _id, name, password } = await User.findOne(
+    const { _id, avatarURL, name, password } = await User.findOne(
       { email },
-      '_id name password servers'
+      '_id avatarURL name password servers'
     );
 
-    return { _id, name, password };
+    return { _id, avatarURL, name, password };
   } catch (error) {
     console.log('error:', error.message);
     return { error: error.message };

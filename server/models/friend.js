@@ -168,7 +168,8 @@ const getPendingFriends = async (userId) => {
     ).populate({
       path: 'outgoingFriendReq incomingFriendReq',
       select: {
-        name: '$name',
+        'name': 1,
+        'avatarURL': 1,
       },
     });
 
@@ -188,8 +189,11 @@ const getAllFriends = async (userId) => {
       path: 'friends',
       select: {
         'name': 1,
+        'avatarURL': 1,
       },
     });
+
+    // console.log('friends', friends);
 
     return { friends };
   } catch (error) {

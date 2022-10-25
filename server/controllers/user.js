@@ -71,6 +71,7 @@ const signIn = async (req, res) => {
     const jwtToken = await jwtSign(
       {
         userId: result._id,
+        userAvatar: result.avatarURL,
         userName: result.name,
       },
       SECRET,

@@ -59,7 +59,7 @@ const getMultiChatRecord = async (channelId) => {
       select: { '_id': 0 },
       populate: {
         path: 'sender',
-        select: { 'name': 1, '_id': 0 },
+        select: { 'name': 1, '_id': 0, 'avatarURL': 1 },
       },
     });
 
@@ -106,7 +106,7 @@ const getPersonalChatRecord = async (senderId, receiverId) => {
       ],
     }).populate({
       path: 'sender receiver',
-      select: { 'name': 1, 'id': 1 },
+      select: { 'name': 1, 'id': 1, 'avatarURL': 1 },
     });
 
     // console.log(chat);

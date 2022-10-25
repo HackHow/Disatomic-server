@@ -46,6 +46,10 @@ const multiChatSchema = new Schema({
 });
 
 const userSchema = new Schema({
+  avatarURL: {
+    type: String,
+    default: '',
+  },
   name: {
     type: String,
     required: true,
