@@ -116,7 +116,6 @@ const serverSchema = new Schema({
   ],
   roles: [
     {
-      // title: String, // 'Back-End'
       permission: String,
       usersId: [
         {
@@ -128,14 +127,8 @@ const serverSchema = new Schema({
   ],
   channel: [
     {
-      name: String, // 公佈欄
-      isPublic: Boolean, // false
-      // roles: [
-      //   {
-      //     roleName: String, // Back-end
-      //     permission: String, // read
-      //   },
-      // ],
+      name: String,
+      isPublic: Boolean,
       members: [
         {
           _id: false,
@@ -143,7 +136,7 @@ const serverSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'User',
           },
-          permission: String, // read (程式控制)
+          permission: String,
         },
       ],
       chatRecord: [

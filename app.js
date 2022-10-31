@@ -6,11 +6,13 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const cors = require('cors');
 const dayjs = require('dayjs');
-const { API_VERSION, PORT, SECRET } = process.env;
-const { jwtVerify } = require('./utils/util');
-const Friend = require('./server/models/friend');
+const { API_VERSION, PORT } = process.env;
+const { socketAuth } = require('./utils/util');
+// const Friend = require('./server/models/friend');
 const Chat = require('./server/models/chat_record');
-const Channel = require('./server/models/channel');
+// const Channel = require('./server/models/channel');
+const Channel = require('./socket/controllers/channel');
+const Friend = require('./socket/controllers/friend');
 
 app.use(cors());
 app.use(express.static('public'));
@@ -32,20 +34,6 @@ const io = new Server(server, {
 
 const allOnlineUser = {};
 
-function saveOnlineUser(key, value) {
-  if (value) {
-    allOnlineUser[key] = value;
-  }
-  // console.log('Save new online User:', allOnlineUser);
-}
-
-function deleteOfflineUser(userId) {
-  if (allOnlineUser[userId]) {
-    delete allOnlineUser[userId];
-  }
-  // console.log('After Delete Offline User:', allOnlineUser);
-}
-
 function getOnlineFriend(allOnlineUser, friendList) {
   const friendInOnline = [];
   for (let i = 0; i < friendList.length; i++) {
@@ -64,26 +52,11 @@ function getOnlineFriend(allOnlineUser, friendList) {
 
 io.use(async (socket, next) => {
   let token = socket.handshake.auth.token;
-  token = token.replace('Bearer ', '');
-  if (token === 'null') {
-    return next(new Error('Not authorized'));
-  }
-
   try {
-    const { userId, userAvatar, userName } = await jwtVerify(token, SECRET);
-    const result = await Channel.getAllChannel(userId);
-    const userChannels = [];
-    if (result.length > 0) {
-      for (let i = 0; i < result.length; i++) {
-        const channel = result[i].serverId.channel;
-        if (channel.length > 0) {
-          for (let j = 0; j < channel.length; j++) {
-            userChannels.push(channel[j].id);
-          }
-        }
-      }
-    }
+    const { userId, userAvatar, userName } = await socketAuth(token);
+    const userChannels = await Channel.getAllChannel(userId);
     const { friends } = await Friend.getAllFriends(userId);
+
     socket.userId = userId;
     socket.userAvatar = userAvatar;
     socket.userName = userName;
@@ -93,7 +66,7 @@ io.use(async (socket, next) => {
     next();
   } catch (error) {
     console.log(error);
-    next(new Error('Verify error!'));
+    next(error);
   }
 });
 
@@ -102,8 +75,7 @@ io.on('connection', (socket) => {
     `User Connected:    ${socket.id}`,
     `***${new Date().toISOString()}***`
   );
-
-  saveOnlineUser(socket.userId, socket.id);
+  allOnlineUser[socket.userId] = socket.id;
 
   socket.emit('userName', socket.userName);
   socket.emit('userAvatar', socket.userAvatar);
@@ -269,7 +241,7 @@ io.on('connection', (socket) => {
       `User disconnected: ${socket.id}`,
       `***${new Date().toISOString()}***`
     );
-    deleteOfflineUser(socket.userId);
+    delete allOnlineUser[socket.userId];
 
     if (friendOnlineList.length > 0) {
       const friendOnlineSocketId = friendOnlineList.map(

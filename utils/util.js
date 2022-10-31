@@ -66,8 +66,8 @@ const jwtVerify = async (token, secret) => {
 };
 
 const authentication = async (req, res, next) => {
-  let accessToken = req.get('Authorization');
-  // console.log(accessToken);
+  // let accessToken = req.get('Authorization');
+  let accessToken = req.headers.authorization;
   if (!accessToken) {
     res.status(401).send('Unauthorized');
     return;
@@ -90,10 +90,36 @@ const authentication = async (req, res, next) => {
   }
 };
 
+const socketJwtVerify = (token, secret) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secret, (error, payload) => {
+      if (error) {
+        reject(new Error('Verify error!'));
+      } else {
+        resolve(payload);
+      }
+    });
+  });
+};
+
+const socketAuth = async (token) => {
+  token = token.replace('Bearer ', '');
+  if (token === 'null') {
+    throw new Error('Not authorized');
+  }
+
+  try {
+    return await socketJwtVerify(token, SECRET);
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   uploadS3,
   uploadLocal,
   jwtSign,
   jwtVerify,
   authentication,
+  socketAuth,
 };
