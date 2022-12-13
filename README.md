@@ -74,7 +74,7 @@ password: abcdef
 
 ## Architecture
 
-![architecture](./public/architecture.jpg)
+![disatomic_arch](https://user-images.githubusercontent.com/56557271/207245146-efb2f7e1-2af7-4c79-aed9-f24ad822ded3.png)
 
 ## Contact
 If you have some suggestions or feedback, please get in touch with me.
