@@ -4,8 +4,6 @@
 ## Disatomic
 - [Download Desktop App for Windows](https://github.com/HackHow/Disatomic-server/releases/tag/v1.0.0)
 - [Website](https://dis4tomic.com)
-- [Front-End Repo](https://github.com/HackHow/Disatomic-React)
-- [Demo Video](https://drive.google.com/file/d/1x9eUrFunTPjnNZyUa8nAw0Lkrj1JphJY/view)
 
 ## Table of Contents
 
